@@ -1,3 +1,6 @@
+/**
+ * Group 7 project for DBL Algorithms
+ */
 package dbl_algorithms;
 
 import java.io.BufferedReader;
@@ -72,6 +75,6 @@ public class DblAlgo {
     }
 
     public static void main(String[] args) throws IOException {
-        new Main().run();
+        new DblAlgo().run();
     }
 }
