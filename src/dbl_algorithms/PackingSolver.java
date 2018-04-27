@@ -1,7 +1,7 @@
 /**
  * Group 7 project for DBL Algorithms
  */
-package dbl_algorithms;
+// package dbl_algorithms;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 /**
  * Main class of the program. Execute the program by running this class and providing appropriate input.
  */
-public class DblAlgo {
+public class PackingSolver {
 
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -75,6 +75,6 @@ public class DblAlgo {
     }
 
     public static void main(String[] args) throws IOException {
-        new DblAlgo().run();
+        new PackingSolver().run();
     }
 }
