@@ -1,9 +1,12 @@
 /**
  * Group 7 project for DBL Algorithms
  */
-// package dbl_algorithms;
+package dbl_algorithms;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -12,7 +15,9 @@ import java.io.InputStreamReader;
  */
 public class PackingSolver {
 
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static BufferedReader br; 
+    private GUI drawing;
+    File file;
 
     /**
      * Method that places given rectangles one next to each other in order they are provided.
@@ -40,9 +45,12 @@ public class PackingSolver {
      *
      * @throws IOException
      */
-    private void run() throws IOException {
+    private void run() throws IOException, FileNotFoundException {
         /* input */
         // container height: {free, fixed}
+        try {
+        file = new File("file.txt");    
+        br =  new BufferedReader(new FileReader(file));
         String containerHeight = br.readLine().split("container height: ")[1]; // {free, fixed}
 
         // rotations allowed: {yes, no}
@@ -50,14 +58,18 @@ public class PackingSolver {
 
         // number of rectangles: n
         int numberOfRectangles = Integer.parseInt(br.readLine().split("number of rectangles: ")[1]); // n
-
+        System.out.println(numberOfRectangles);
         // rectangle input
         int[][] rectangles = new int [numberOfRectangles][2];
 
         for(int i = 0; i < numberOfRectangles; i++) {
             String[] input = br.readLine().split(" ");
             rectangles[i][0] = Integer.parseInt(input[0]);
+            System.out.print(rectangles[i][0] + " ");
             rectangles[i][1] = Integer.parseInt(input[1]);
+            System.out.println(rectangles[i][1]);
+            System.out.println("end of iteration iteration " + i);
+            
         }
 
         /* output */
@@ -72,6 +84,17 @@ public class PackingSolver {
         for(int i = 0; i < numberOfRectangles; i++) {
             System.out.println("no " + placement[i][0] + " " + placement[i][1]);
         }
+        drawing = new GUI(placement, numberOfRectangles, rectangles);
+        drawing.run();
+        } catch (FileNotFoundException e) {
+            System.out.print(e);
+            if (file.exists()) {
+            System.out.println("I do!");
+        }
+        } catch (IOException e) {
+            System.out.print(e);
+        }
+        
     }
 
     public static void main(String[] args) throws IOException {
