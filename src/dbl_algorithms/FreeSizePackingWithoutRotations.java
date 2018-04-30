@@ -9,6 +9,11 @@ package dbl_algorithms;
  *
  * @author dianaepureanu
  */
-public class FreeSizePackingWithoutRotations {
+public class FreeSizePackingWithoutRotations extends PackingStrategy{
+
+    @Override
+    protected void pack() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

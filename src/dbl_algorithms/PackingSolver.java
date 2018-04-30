@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 /**
  * Main class of the program. Execute the program by running this class and providing appropriate input.
  */
-public class PackingSolver {
+public class PackingSolver extends PackingStrategy {
 
     private static BufferedReader br; 
     private GUI drawing;
@@ -45,7 +45,8 @@ public class PackingSolver {
      *
      * @throws IOException
      */
-    private void run() throws IOException, FileNotFoundException {
+    @Override
+    protected void pack() throws IOException, FileNotFoundException {
         /* input */
         // container height: {free, fixed}
         try {
@@ -94,10 +95,6 @@ public class PackingSolver {
         } catch (IOException e) {
             System.out.print(e);
         }
-        
-    }
-
-    public static void main(String[] args) throws IOException {
-        new PackingSolver().run();
     }
 }
+
