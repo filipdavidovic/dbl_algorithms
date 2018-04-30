@@ -6,7 +6,6 @@
 package dbl_algorithms;
 
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 /**
  *
@@ -16,19 +15,23 @@ import java.io.FileNotFoundException;
 public class PackingSolver {
     
     PackingStrategy strategy;
-    //read first 3 lines of input and select the strategy
-    // currently it always chooses PackingSolver by default
+
+    /**
+     * read first 3 lines of input and select the strategy
+     * currently it always chooses PackingSolver by default
+     */
     public PackingSolver () {
         this.strategy = new DefaultStrategy();
     }
     
-    protected void run() {
-        try{
-        strategy.pack();
-        }catch (IOException e) {
+    private void run() {
+        try {
+            strategy.pack();
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
+
     public static void main(String[] args) throws IOException {
         new PackingSolver().run();
     } 
