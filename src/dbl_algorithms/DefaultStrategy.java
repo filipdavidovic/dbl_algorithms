@@ -15,8 +15,16 @@ import java.io.InputStreamReader;
  */
 public class DefaultStrategy extends PackingStrategy {
 
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private GUI drawing;
+    private Rectangle[] rectangles;
+    private String containerHeight;
+    private boolean rotationsAllowed;
+
+    DefaultStrategy(String containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
+        this.containerHeight = containerHeight;
+        this.rotationsAllowed = rotationsAllowed;
+        this.rectangles = rectangles;
+    }
 
     /**
      * Method that places given rectangles one next to each other in order they are provided.
@@ -25,15 +33,15 @@ public class DefaultStrategy extends PackingStrategy {
      * @param rectangles - rectangles to be ordered.
      * @return - lower x and lower y coordinates of each of the rectangles.
      */
-    private int[][] noSort(int[][] rectangles) {
-        int[][] ret = new int[rectangles.length][2];
+    private Rectangle[] noSort(Rectangle[] rectangles) {
+        Rectangle[] ret = new Rectangle[rectangles.length];
 
         int sum = 0;
 
         for(int i = 0; i < rectangles.length; i++) {
-            ret[i][0] = sum;
-            ret[i][1] = 0;
-            sum += rectangles[i][0];
+            ret[i] = new Rectangle(rectangles[i].width, rectangles[i].height);
+            ret[i].setPosition(sum, 0);
+            sum += ret[i].width;
         }
 
         return ret;
@@ -46,35 +54,19 @@ public class DefaultStrategy extends PackingStrategy {
      */
     @Override
     protected void pack() throws IOException {
-        /* input */
-        // container height: {free, fixed}
-        String containerHeight = br.readLine().split("container height: ")[1]; // {free, fixed}
-
-        // rotations allowed: {yes, no}
-        String rotationsAllowed = br.readLine().split("rotations allowed: ")[1]; // {yes, no}
-
-        // number of rectangles: n
-        int numberOfRectangles = Integer.parseInt(br.readLine().split("number of rectangles: ")[1]); // n
-        // rectangle input
-        int[][] rectangles = new int [numberOfRectangles][2];
-
-        for(int i = 0; i < numberOfRectangles; i++) {
-            String[] input = br.readLine().split(" ");
-            rectangles[i][0] = Integer.parseInt(input[0]);
-            rectangles[i][1] = Integer.parseInt(input[1]);
-        }
+        Rectangle[] placement = noSort(rectangles);
 
         /* output */
         System.out.println("container height: " + containerHeight);
         System.out.println("rotations allowed: " + rotationsAllowed);
-        System.out.println("number of rectangles: " + numberOfRectangles);
-        for(int i = 0; i < numberOfRectangles; i++) {
-            System.out.println(rectangles[i][0] + " " + rectangles[i][1]);
+        System.out.println("number of rectangles: " + rectangles.length);
+        for(Rectangle rectangle : rectangles) {
+            System.out.println(rectangle.width + " " + rectangle.height);
         }
+
         System.out.println("placement of rectangles");
-        int[][] placement = noSort(rectangles);
-        for(int i = 0; i < numberOfRectangles; i++) {
-            System.out.println("no " + placement[i][0] + " " + placement[i][1]);
+        for(int i = 0; i < rectangles.length; i++) {
+            System.out.println("no " + placement[i].blx + " " + placement[i].bly);
         }
 
 //        drawing = new GUI(placement, numberOfRectangles, rectangles);

@@ -27,7 +27,7 @@ public class Rectangle {
     }
     
     public void setPosition(int x, int y){
-    this.blx = x;
-    this.bly = y;
+        this.blx = x;
+        this.bly = y;
     }
 }
