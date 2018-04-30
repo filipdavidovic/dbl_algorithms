@@ -27,5 +27,11 @@ public class State {
         }
         
     }
+
+    public Rectangle[] getLayout() {
+        return layout;
+    }
+    
+    
     
 }

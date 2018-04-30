@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Main class of the program. Execute the program by running this class and providing appropriate input.
+ * Main class of the program. Execute the program by running this class and
+ * providing appropriate input.
  */
 public class DefaultStrategy extends PackingStrategy {
 
@@ -27,24 +28,25 @@ public class DefaultStrategy extends PackingStrategy {
     }
 
     /**
-     * Method that places given rectangles one next to each other in order they are provided.
-     * The width of this container will be the sum of all rectangles' widths (x-coordinate).
+     * Method that places given rectangles one next to each other in order they
+     * are provided. The width of this container will be the sum of all
+     * rectangles' widths (x-coordinate).
      *
      * @param rectangles - rectangles to be ordered.
      * @return - lower x and lower y coordinates of each of the rectangles.
      */
-    private Rectangle[] noSort(Rectangle[] rectangles) {
-        Rectangle[] ret = new Rectangle[rectangles.length];
+    private State noSort(Rectangle[] rectangles) {
+        State s;
+        s = new State(rectangles.length);
 
         int sum = 0;
 
-        for(int i = 0; i < rectangles.length; i++) {
-            ret[i] = new Rectangle(rectangles[i].width, rectangles[i].height);
-            ret[i].setPosition(sum, 0);
-            sum += ret[i].width;
+        for (int i = 0; i < rectangles.length; i++) {
+            rectangles[i].setPosition(sum, 0);
+            s.addRectangle(rectangles[i]);
+            sum += rectangles[i].blx;
         }
-
-        return ret;
+        return s;
     }
 
     /**
@@ -54,23 +56,22 @@ public class DefaultStrategy extends PackingStrategy {
      */
     @Override
     protected void pack() throws IOException {
-        Rectangle[] placement = noSort(rectangles);
+        State placement = noSort(rectangles);
 
         /* output */
         System.out.println("container height: " + containerHeight);
         System.out.println("rotations allowed: " + rotationsAllowed);
         System.out.println("number of rectangles: " + rectangles.length);
-        for(Rectangle rectangle : rectangles) {
+        for (Rectangle rectangle : rectangles) {
             System.out.println(rectangle.width + " " + rectangle.height);
         }
 
         System.out.println("placement of rectangles");
-        for(int i = 0; i < rectangles.length; i++) {
-            System.out.println("no " + placement[i].blx + " " + placement[i].bly);
+        for (int i = 0; i < rectangles.length; i++) {
+            System.out.println("no " + placement.getLayout()[i].blx + " " + placement.getLayout()[i].bly);
         }
-
+              
 //        drawing = new GUI(placement, numberOfRectangles, rectangles);
 //        drawing.run();
     }
 }
-
