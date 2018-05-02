@@ -14,5 +14,5 @@ import java.io.IOException;
  */
 public abstract class PackingStrategy {
     
-    protected abstract void pack() throws IOException, FileNotFoundException;
+    protected abstract State pack() throws IOException, FileNotFoundException;
 }

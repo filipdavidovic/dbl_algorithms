@@ -27,15 +27,19 @@ public class DefaultStrategy extends PackingStrategy {
         this.rectangles = rectangles;
     }
 
+
     /**
+     * Method to collect input and run appropriate an algorithm based on it.
+     *
      * Method that places given rectangles one next to each other in order they
      * are provided. The width of this container will be the sum of all
-     * rectangles' widths (x-coordinate).
-     *
-     * @param rectangles - rectangles to be ordered.
-     * @return - lower x and lower y coordinates of each of the rectangles.
+     * rectangles' widths (x-coordinate)
+     * @return 
+     * @throws IOException
      */
-    private State noSort(Rectangle[] rectangles) {
+    @Override
+    protected State pack() throws IOException {
+        
         State s;
         s = new State(rectangles.length);
 
@@ -44,34 +48,10 @@ public class DefaultStrategy extends PackingStrategy {
         for (int i = 0; i < rectangles.length; i++) {
             rectangles[i].setPosition(sum, 0);
             s.addRectangle(rectangles[i]);
-            sum += rectangles[i].blx;
+            sum += rectangles[i].width;
         }
+       
         return s;
-    }
-
-    /**
-     * Method to collect input and run appropriate an algorithm based on it.
-     *
-     * @throws IOException
-     */
-    @Override
-    protected void pack() throws IOException {
-        State placement = noSort(rectangles);
-
-        /* output */
-        System.out.println("container height: " + containerHeight);
-        System.out.println("rotations allowed: " + rotationsAllowed);
-        System.out.println("number of rectangles: " + rectangles.length);
-        for (Rectangle rectangle : rectangles) {
-            System.out.println(rectangle.width + " " + rectangle.height);
-        }
-
-        System.out.println("placement of rectangles");
-        for (int i = 0; i < rectangles.length; i++) {
-            System.out.println("no " + placement.getLayout()[i].blx + " " + placement.getLayout()[i].bly);
-        }
-              
-//        drawing = new GUI(placement, numberOfRectangles, rectangles);
-//        drawing.run();
+        
     }
 }
