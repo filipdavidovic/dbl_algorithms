@@ -53,7 +53,7 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+            strategy = new BottomLeft(containerHeight, rotationsAllowed, rectangles);
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
@@ -63,7 +63,7 @@ public class PackingSolver {
         }
     }
     
-    private void printOutput(Rectangle[] layout, String containerHeight, boolean rotationsAllowed) {
+    private void printOutput(Rectangle[] layout, int containerHeight, boolean rotationsAllowed) {
   
         System.out.println("container height: " + containerHeight);
         System.out.println("rotations allowed: " + rotationsAllowed);

@@ -5,11 +5,11 @@ import java.io.IOException;
 
 public class BottomLeft extends PackingStrategy {
 
-    String containerHeight;
+    int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
 
-    BottomLeft(String containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
+    BottomLeft(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
@@ -17,8 +17,10 @@ public class BottomLeft extends PackingStrategy {
 
 
     @Override
-    protected void pack() throws IOException, FileNotFoundException {
+    protected State pack() throws IOException, FileNotFoundException {
         // TODO: sort rectangles descending order
+
+        State s = new State(rectangles.length);
 
         final int frameWidth = 100;
         int height = 0;
@@ -29,19 +31,25 @@ public class BottomLeft extends PackingStrategy {
 
             int maxHeight = 0;
             for(int j = 0; j < i; j++) {
-                if(rectangles[j].blx <= sx && rectangles[j].blx + rectangles[j].width > sx) {
+                // check that the rectangle is below the current position and that its x is greater than the current maxHeight
+                if(rectangles[j].blx <= sx && rectangles[j].blx + rectangles[j].width > sx && rectangles[j].bly + rectangles[j].height > maxHeight) {
                     maxHeight = rectangles[j].bly + rectangles[j].height;
                 }
             }
 
             int maxWidth = 0;
             for(int j = 0; j < i; j++) {
-                if(rectangles[j].bly <= sy && rectangles[j].bly + rectangles[j].height > sy) {
+                // check that the rectangle is to the left of the current position and that its y is greater than the current maxWidth
+                if(rectangles[j].bly <= sy && rectangles[j].bly + rectangles[j].height > sy && rectangles[j].blx + rectangles[j].width > maxWidth) {
                     maxWidth = rectangles[j].blx + rectangles[j].width;
                 }
             }
 
             rectangles[i].setPosition(maxWidth, maxHeight);
+
+            s.addRectangle(rectangles[i]);
         }
+
+        return s;
     }
 }
