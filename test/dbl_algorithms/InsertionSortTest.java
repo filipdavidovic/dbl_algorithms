@@ -62,7 +62,7 @@ public class InsertionSortTest {
         assertEquals(result[0].width, 3);
         assertEquals(result[1].width, 2);
         assertEquals(result[2].width, 1);
-        fail("The test case is a prototype.");
+        
     }
     
 }
