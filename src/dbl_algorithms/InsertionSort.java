@@ -14,16 +14,19 @@ import java.io.IOException;
  */
 public class InsertionSort implements AbstractSort{
     @Override
-    public void sort(Rectangle[] rectangles) {
+    public Rectangle[] sort(Rectangle[] rectangles) {
         int n = rectangles.length;
+        Rectangle[] result = new Rectangle[n];
+        result[0] = new Rectangle(rectangles[0].width, rectangles[0].height);
         for (int i = 1; i < n; i++) {
-            int key = rectangles[i].width;
+            Rectangle key = new Rectangle(rectangles[i].width, rectangles[i].height);
             int j = i - 1;
-            while (j >= 0 && rectangles[j].width > key) {
-                rectangles[j + 1] = rectangles[j];
+            while (j >= 0 && result[j].width < key.width) {
+                result[j + 1] = result[j];
                 j = j - 1;
             }
-            rectangles[j + 1].width = key;
+            result[j + 1] = key;
         }
+        return result;
     }
 }
