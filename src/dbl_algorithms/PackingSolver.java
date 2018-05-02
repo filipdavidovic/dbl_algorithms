@@ -30,8 +30,14 @@ public class PackingSolver {
     private void run() {
         try {
             /* input */
-            // container height: {free, fixed}
-            String containerHeight = br.readLine().split("container height: ")[1]; // {free, fixed}
+            // container height: {free, fixed x}
+            int containerHeight;
+            String containerHeightString = br.readLine().split("container height: ")[1];
+            if(containerHeightString.equals("free")) {
+                containerHeight = -1;
+            } else {
+                containerHeight = Integer.parseInt(containerHeightString.split(" ")[1]);
+            }
 
             // rotations allowed: {yes, no}
             boolean rotationsAllowed = br.readLine().split("rotations allowed: ")[1].equals("yes"); // {yes, no}
