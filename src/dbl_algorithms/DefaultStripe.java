@@ -15,7 +15,7 @@ import java.io.IOException;
 public class DefaultStripe extends PackingStrategy{
 
     @Override
-    protected void pack() throws IOException, FileNotFoundException {
+    protected State pack() throws IOException, FileNotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
