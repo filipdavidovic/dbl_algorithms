@@ -10,12 +10,12 @@ package dbl_algorithms;
  * @author TijanaKlimovic
  */
 public class State {
-    Rectangle[] layout;
+    private Rectangle[] layout;
     int index;
     
     State(int size){
-    layout = new Rectangle[size];
-    index = 0;
+        layout = new Rectangle[size];
+        index = 0;
     }
     
     public void addRectangle(Rectangle r){
@@ -23,7 +23,7 @@ public class State {
             layout[index] = r;
             index ++;  
         }else{
-        System.out.println("Layout size exceeded!");
+            System.out.println("Layout size exceeded!");
         }
         
     }

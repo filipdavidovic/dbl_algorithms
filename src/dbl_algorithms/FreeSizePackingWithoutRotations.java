@@ -12,7 +12,7 @@ package dbl_algorithms;
 public class FreeSizePackingWithoutRotations extends PackingStrategy{
 
     @Override
-    protected void pack() {
+    protected State pack() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

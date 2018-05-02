@@ -9,13 +9,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- *
+ * Implementation of First fit decreasing algorithm for Prototype 1 version 2
  * @author TijanaKlimovic
  */
 public class DefaultStripe extends PackingStrategy{
 
     @Override
-    protected void pack() throws IOException, FileNotFoundException {
+    protected State pack() throws IOException, FileNotFoundException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -55,9 +55,26 @@ public class PackingSolver {
             // TODO: make the selection for the proper algorithm
             strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
 
-            strategy.pack();
+            State s = strategy.pack();
+            printOutput(s.getLayout(), containerHeight, rotationsAllowed);
+            
         } catch (IOException e) {
             System.out.println(e.toString());
+        }
+    }
+    
+    private void printOutput(Rectangle[] layout, String containerHeight, boolean rotationsAllowed) {
+  
+        System.out.println("container height: " + containerHeight);
+        System.out.println("rotations allowed: " + rotationsAllowed);
+        System.out.println("number of rectangles: " + layout.length);
+        for (Rectangle rectangle : layout) {
+            System.out.println(rectangle.width + " " + rectangle.height);
+        }
+
+        System.out.println("placement of rectangles");
+        for (int i = 0; i < layout.length; i++) {
+            System.out.println("no " + layout[i].blx + " " + layout[i].bly);
         }
     }
 
