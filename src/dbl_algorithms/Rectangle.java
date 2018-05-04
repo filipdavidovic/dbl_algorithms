@@ -26,6 +26,15 @@ public class Rectangle {
         this.width = width;
     }
     
+    Rectangle(int width, int height, int x, int y){
+        //default
+        this.blx = x;
+        this.bly = y;
+        this.rotated = false;       
+        this.height = height;        
+        this.width = width;
+    }
+    
     public void setPosition(int x, int y){
         this.blx = x;
         this.bly = y;

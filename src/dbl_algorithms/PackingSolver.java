@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 public class PackingSolver {
     
     PackingStrategy strategy;
+    private GUI drawing;
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     /**
@@ -57,6 +58,10 @@ public class PackingSolver {
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
+            
+            drawing = new GUI(s);
+            drawing.run();
+
             
         } catch (IOException e) {
             System.out.println(e.toString());

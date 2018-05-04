@@ -21,11 +21,14 @@ public class State {
         
     }
     
+<<<<<<< HEAD
+=======
 //    State(Rectangle[] rectangles){
 //        layout = rectangles;
 //        index = layout.length;
 //        
 //    }
+>>>>>>> refs/remotes/origin/master
     
     public void addRectangle(Rectangle r){
         if(index < layout.length){
