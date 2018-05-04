@@ -17,11 +17,13 @@ public class DrawGrid extends JPanel {
     private Color[] colors = new Color[7];
     Random rand = new Random();
     State state;
-    int sheight = 5; //these will be in the state, hardcoded for now for 05_01_h7
-    int swidth= 56;
+    int sheight;
+    int swidth;
     
     public DrawGrid(State s) {
         this.state = s;
+        this.sheight = s.layoutWidth;
+        this.swidth = s.layoutWidth;
         colors[0] = new Color(160,157,215);
         colors[1] = new Color(214,95,92);
         colors[2] = new Color(165,146,144);
@@ -37,6 +39,7 @@ public class DrawGrid extends JPanel {
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         Dimension dim = super.getSize();
+        
         //proportions based on the current dimensions
         //of the window so that everything is always visible
         int xunit = (int)((int)dim.width / (int)swidth);
