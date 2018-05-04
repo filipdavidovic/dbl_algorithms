@@ -53,8 +53,7 @@ public class DrawGrid extends JPanel {
             int uly = (( sheight - layout[i].bly )- layout[i].height)*yunit;
             int width = layout[i].width * xunit;
             int height = layout[i].height * yunit;
-            
-            System.out.println(xunit+ " "+yunit+ " "+ ulx+" "+uly+" "+width+" "+height);
+
             g2.fillRect(ulx, uly, width , height);   
         }
         
