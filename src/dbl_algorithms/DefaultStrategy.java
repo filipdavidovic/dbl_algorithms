@@ -3,12 +3,7 @@
  */
 package dbl_algorithms;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Main class of the program. Execute the program by running this class and
@@ -18,10 +13,10 @@ public class DefaultStrategy extends PackingStrategy {
 
     private GUI drawing;
     private Rectangle[] rectangles;
-    private String containerHeight;
+    private int containerHeight;
     private boolean rotationsAllowed;
 
-    DefaultStrategy(String containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
+    DefaultStrategy(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;

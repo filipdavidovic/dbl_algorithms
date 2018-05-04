@@ -9,5 +9,5 @@ public interface AbstractSort {
     /*
     * 
     */
-    abstract void sort(Rectangle[] rectangles);
+    abstract Rectangle[] sort(Rectangle[] rectangles);
 }

@@ -31,8 +31,14 @@ public class PackingSolver {
     private void run() {
         try {
             /* input */
-            // container height: {free, fixed}
-            String containerHeight = br.readLine().split("container height: ")[1]; // {free, fixed}
+            // container height: {free, fixed x}
+            int containerHeight;
+            String containerHeightString = br.readLine().split("container height: ")[1];
+            if(containerHeightString.equals("free")) {
+                containerHeight = -1;
+            } else {
+                containerHeight = Integer.parseInt(containerHeightString.split(" ")[1]);
+            }
 
             // rotations allowed: {yes, no}
             boolean rotationsAllowed = br.readLine().split("rotations allowed: ")[1].equals("yes"); // {yes, no}
@@ -48,7 +54,7 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+            strategy = new BottomLeft(containerHeight, rotationsAllowed, rectangles);
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
@@ -62,7 +68,7 @@ public class PackingSolver {
         }
     }
     
-    private void printOutput(Rectangle[] layout, String containerHeight, boolean rotationsAllowed) {
+    private void printOutput(Rectangle[] layout, int containerHeight, boolean rotationsAllowed) {
   
         System.out.println("container height: " + containerHeight);
         System.out.println("rotations allowed: " + rotationsAllowed);

@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- *
+ * Implementation of First fit decreasing algorithm for Prototype 1 version 2
  * @author TijanaKlimovic
  */
 public class DefaultStripe extends PackingStrategy{
