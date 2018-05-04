@@ -18,6 +18,7 @@ public class State {
         index = 0;
     }
     
+    
     public void addRectangle(Rectangle r){
         if(index < layout.length){
             layout[index] = r;

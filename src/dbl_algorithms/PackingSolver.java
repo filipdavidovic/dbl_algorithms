@@ -53,7 +53,7 @@ public class PackingSolver {
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
             
-            drawing = new GUI(s.getLayout());
+            drawing = new GUI(s);
             drawing.run();
 
             

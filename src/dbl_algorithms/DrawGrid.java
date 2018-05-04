@@ -1,79 +1,65 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
  */
 package dbl_algorithms;
 
 import java.awt.*;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Random;
-
+import javax.swing.JPanel;
 
 /**
  *
- * @author dianaepureanu
  */
-public class DrawGrid extends JFrame {
-    
-    //private int[][] grid;
-    private JFrame window = new JFrame("Packing Visualisation");
+public class DrawGrid extends JPanel {
+
+    //private JFrame window = new JFrame("Packing Visualisation");
     private Color[] colors = new Color[7];
     Random rand = new Random();
-        
+    State state;
+    int sheight = 5; //these will be in the state, hardcoded for now for 05_01_h7
+    int swidth= 56;
     
-    public DrawGrid(Rectangle[] layout) {
-        //this.grid = grid;
-        //define colors
+    public DrawGrid(State s) {
+        this.state = s;
         colors[0] = new Color(160,157,215);
         colors[1] = new Color(214,95,92);
         colors[2] = new Color(165,146,144);
         colors[3] = new Color(75,38,34);
         colors[4] = new Color(250,128,114);
         colors[5] = new Color(130,152,154);
-        colors[6] = new Color(154,132,130);
-        
-        //window.setSize(300,400);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setLayout(new GridBagLayout());
-        fillLayout(window.getContentPane(), layout); 
-        window.pack(); 
-        window.setVisible(true);
- 
+        colors[6] = new Color(154,132,130);     
     }
     
-    private void fillLayout(Container pane, Rectangle[] layout){
+    public void paint(Graphics g) {
         
-        JLabel label;
-        pane.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.NONE; //or none?   
+        Rectangle[] layout = state.getLayout();
+        super.paint(g);
+        Graphics2D g2 = (Graphics2D) g;
+        Dimension dim = super.getSize();
+        //proportions based on the current dimensions
+        //of the window so that everything is always visible
+        int xunit = (int)((int)dim.width / (int)swidth);
+        int yunit = (int)((int)dim.height / (int)sheight);
+       
         
         for (int i = 0; i< layout.length; i++){
+            //select random color from the array
+            int  r = rand.nextInt(7);
+            g2.setColor(colors[r]);
             
-            label = new JLabel(String.valueOf(i));
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = (layout[i].width)/100; 
-            c.weighty = (1/layout.length); 
-            c.gridx = layout[i].blx + layout[i].height;
-            c.gridy = layout[i].bly;
-            c.gridwidth = layout[i].width;
-            c.gridheight = layout[i].height;
-           // c.anchor = GridBagConstraints.FIRST_LINE_START; //top left
-            //choose random color from our list
-            int  n = rand.nextInt(7);
-            label.setBackground(colors[n]);
-            label.setOpaque(true);
-            label.setVisible(true);
-            pane.add(label, c);
+            //compute dimensions
+            int ulx = (layout[i].blx)*xunit;
+            int uly = (( sheight - layout[i].bly )- layout[i].height)*yunit;
+            int width = layout[i].width * xunit;
+            int height = layout[i].height * yunit;
+            
+            System.out.println(xunit+ " "+yunit+ " "+ ulx+" "+uly+" "+width+" "+height);
+            g2.fillRect(ulx, uly, width , height);   
         }
         
-        
-        
-        
-        
-        
     }
+    
+
     
 }
