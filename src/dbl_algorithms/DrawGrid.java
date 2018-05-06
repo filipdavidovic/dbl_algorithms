@@ -22,15 +22,15 @@ public class DrawGrid extends JPanel {
     
     public DrawGrid(State s) {
         this.state = s;
-        this.sheight = s.layoutWidth;
+        this.sheight = s.layoutHeight;
         this.swidth = s.layoutWidth;
-        colors[0] = new Color(160,157,215);
-        colors[1] = new Color(214,95,92);
-        colors[2] = new Color(165,146,144);
-        colors[3] = new Color(75,38,34);
-        colors[4] = new Color(250,128,114);
-        colors[5] = new Color(130,152,154);
-        colors[6] = new Color(154,132,130);     
+        colors[0] = new Color(90,90,93);
+        colors[1] = new Color(113,127,114);
+        colors[2] = new Color(201,99,204);
+        colors[3] = new Color(230,210,235);
+        colors[4] = new Color(149,255,176);
+        colors[5] = new Color(40,153,132);
+        colors[6] = new Color(99,204,185);     
     }
     
     public void paint(Graphics g) {
@@ -44,7 +44,14 @@ public class DrawGrid extends JPanel {
         //of the window so that everything is always visible
         int xunit = (int)((int)dim.width / (int)swidth);
         int yunit = (int)((int)dim.height / (int)sheight);
-       
+        System.out.println("height: "+ sheight+ " width:  "+ swidth);
+        
+        if (xunit < 1){
+            xunit = 1;
+        }
+        if (yunit < 1){
+            yunit = 1;
+        }
         
         for (int i = 0; i< layout.length; i++){
             //select random color from the array

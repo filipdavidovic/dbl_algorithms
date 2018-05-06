@@ -54,7 +54,7 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new BottomLeft(containerHeight, rotationsAllowed, rectangles);
+            strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
