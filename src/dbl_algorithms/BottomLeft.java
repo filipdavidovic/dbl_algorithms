@@ -19,7 +19,9 @@ public class BottomLeft extends PackingStrategy {
     @Override
     protected State pack() throws IOException, FileNotFoundException {
         // TODO: sort rectangles descending order
-
+        QuickSort instance = new QuickSort();
+        rectangles = instance.sort(rectangles);
+        
         State s = new State(rectangles.length);
 
         final int frameWidth = 20;

@@ -44,7 +44,7 @@ public class DrawGrid extends JPanel {
         //of the window so that everything is always visible
         int xunit = (int)((int)dim.width / (int)swidth);
         int yunit = (int)((int)dim.height / (int)sheight);
-        System.out.println("height: "+ sheight+ " width:  "+ swidth);
+        //System.out.println("height: "+ sheight+ " width:  "+ swidth);
         
         if (xunit < 1){
             xunit = 1;
