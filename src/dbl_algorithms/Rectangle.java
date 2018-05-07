@@ -39,4 +39,12 @@ public class Rectangle {
         this.blx = x;
         this.bly = y;
     }
+    
+    public void rotate() {
+        int temp = width;
+        width = height;
+        height = temp;
+        rotated = true;
+        //System.out.println(rotated);
+    }
 }

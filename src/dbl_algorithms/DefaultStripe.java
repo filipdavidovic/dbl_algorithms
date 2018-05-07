@@ -31,6 +31,13 @@ public class DefaultStripe extends PackingStrategy {
     @Override
     protected State pack() throws IOException, FileNotFoundException {
         InsertionSort instance = new InsertionSort();
+        if (rotationsAllowed) {
+            for (Rectangle r : rectangles) {
+                if (r.height > r.width) {
+                    r.rotate();
+                }
+            }
+        }
         rectangles = instance.sort(rectangles);
         State state = new State(rectangles.length);
 
@@ -43,7 +50,7 @@ public class DefaultStripe extends PackingStrategy {
             } else {
                 boolean added = false;
                 for (Stripe s : list) {
-                    if (s.add(r)) {
+                    if (s.add(r, list)) {
                         state.addRectangle(r);
                         added = true;
                         break;
@@ -58,8 +65,11 @@ public class DefaultStripe extends PackingStrategy {
         return state;
     }
 
+    /*
+    creates a new stripe at the bottom of maximum height
+    */
     void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list) {
-        System.out.println(llx);
+        //System.out.println(llx);
         Stripe stripe = new Stripe(llx, 0, r.width, containerHeight);
         stripe.add(r);
         state.addRectangle(r);
