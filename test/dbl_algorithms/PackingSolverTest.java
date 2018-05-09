@@ -5,6 +5,8 @@
  */
 package dbl_algorithms;
 
+import java.io.ByteArrayInputStream;
+import java.util.Random;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -22,11 +24,73 @@ public class PackingSolverTest {
      */
     @Test
     public void testMain() throws Exception {
-        System.out.println("main");
-        String[] args = null;
+        
+        String[] args = null;    
+        
+        int size =  25;
+        boolean rotations = false;
+        int fixed = 101; 
+        
+        String input = generateHeader(size, rotations, fixed);
+        input =  generateInput(size, input);
+        System.out.println(input);
+        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         PackingSolver.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+      
+    }
+    
+    
+    private String generateInput(int size, String headers){
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(headers);
+        Random rand = new Random();
+        
+        for (int i = 0; i < size; i++){
+            stringBuilder.append(System.lineSeparator());
+            
+            int height = rand.nextInt(100+1);
+            stringBuilder.append(height);
+            
+            stringBuilder.append(" ");
+            
+            int width = rand.nextInt(100+1);
+            stringBuilder.append(width);
+        }
+        
+        String finalString = stringBuilder.toString();
+        return finalString;
+    }
+    
+    private String generateHeader(int size, boolean rotations, int fixed){
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        //write container height
+        //if fixed == -1 -> free
+        stringBuilder.append("container height: ");
+        if (fixed == -1){
+            stringBuilder.append("free");
+        } else {
+            stringBuilder.append("fixed "+fixed);
+        }
+        stringBuilder.append(System.lineSeparator());
+        
+        //write rotations
+        stringBuilder.append("rotations allowed: ");
+        if (rotations){
+            stringBuilder.append("yes");
+        } else {
+            stringBuilder.append("no");
+        }
+        stringBuilder.append(System.lineSeparator());
+        
+        //write number of rectangles
+        stringBuilder.append("number of rectangles: "+size);
+        
+        
+        String finalString = stringBuilder.toString();
+        return finalString;
     }
     
 }
