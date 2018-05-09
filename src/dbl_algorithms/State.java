@@ -14,10 +14,13 @@ public class State {
     int index;
     int layoutWidth;
     int layoutHeight;
+    int innerArea; //Sum of areas of rectangles that were placed already
+    float fillRate;
     
     State(int size){
         layout = new Rectangle[size];
         index = 0;
+        innerArea = 0;
         
     }
     
@@ -28,7 +31,12 @@ public class State {
         }else{
             System.out.println("Layout size exceeded!");
         }
+        //update inner area and fillRate
+        innerArea = innerArea + (r.height*r.width);
+        fillRate = (float)innerArea/(float)this.getArea();
         
+        
+        //update height and width of the state
         if(r.blx + r.width > layoutWidth){
             layoutWidth = r.blx + r.width;
         }

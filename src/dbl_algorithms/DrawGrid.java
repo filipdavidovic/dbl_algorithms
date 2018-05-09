@@ -13,7 +13,9 @@ import javax.swing.JPanel;
  */
 public class DrawGrid extends JPanel {
 
-    //private JFrame window = new JFrame("Packing Visualisation");
+
+    private static final Font monoFont = new Font("Monospaced", Font.BOLD
+      | Font.ITALIC, 36);
     private Color[] colors = new Color[7];
     Random rand = new Random();
     State state;
@@ -22,7 +24,7 @@ public class DrawGrid extends JPanel {
     
     public DrawGrid(State s) {
         this.state = s;
-        this.sheight = s.layoutWidth;
+        this.sheight = s.layoutHeight;
         this.swidth = s.layoutWidth;
         colors[0] = new Color(90,90,93);
         colors[1] = new Color(113,127,114);
@@ -34,6 +36,8 @@ public class DrawGrid extends JPanel {
     }
     
     public void paint(Graphics g) {
+        
+        
         
         Rectangle[] layout = state.getLayout();
         super.paint(g);
@@ -64,8 +68,20 @@ public class DrawGrid extends JPanel {
             int width = layout[i].width * xunit;
             int height = layout[i].height * yunit;
 
-            g2.fillRect(ulx, uly, width , height);   
+            g2.fillRect(ulx, uly, width , height);  
+            
+        
         }
+        
+        String fillRate = String.valueOf(state.fillRate);
+        g.setFont(monoFont);
+        g.setColor(Color.BLACK);
+        FontMetrics fm = g.getFontMetrics();
+        int w = fm.stringWidth(fillRate);
+        int h = fm.getAscent();
+        g.drawString(fillRate, dim.width - xunit -w, 4*yunit);
+        
+        
         
     }
     
