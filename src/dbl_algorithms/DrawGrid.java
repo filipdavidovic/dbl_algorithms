@@ -22,7 +22,7 @@ public class DrawGrid extends JPanel {
     
     public DrawGrid(State s) {
         this.state = s;
-        this.sheight = s.layoutHeight;
+        this.sheight = s.layoutWidth;
         this.swidth = s.layoutWidth;
         colors[0] = new Color(90,90,93);
         colors[1] = new Color(113,127,114);
