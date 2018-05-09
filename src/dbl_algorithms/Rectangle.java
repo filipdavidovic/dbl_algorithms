@@ -47,4 +47,9 @@ public class Rectangle {
         rotated = true;
         //System.out.println(rotated);
     }
+
+    @Override
+    public Rectangle clone() {
+        return new Rectangle(this.width, this.height, this.blx, this.bly);
+    }
 }

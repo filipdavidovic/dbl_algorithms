@@ -3,46 +3,50 @@ package dbl_algorithms;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * LeftBottom
+ */
 public class BottomLeft extends PackingStrategy {
 
     int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
+    boolean sort;
 
-    BottomLeft(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
+    BottomLeft(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles, boolean sort) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
+        this.sort = sort;
     }
 
 
     @Override
     protected State pack() throws IOException, FileNotFoundException {
         // TODO: sort rectangles descending order
-        QuickSort instance = new QuickSort();
-        rectangles = instance.sort(rectangles);
+        if(this.sort) {
+            QuickSort instance = new QuickSort();
+            rectangles = instance.sort(rectangles);
+        }
         
         State s = new State(rectangles.length);
 
-        final int frameWidth = 20;
-        int height = 0;
+        int width = 0;
 
         for(int i = 0; i < rectangles.length; i++) {
-            int sx = frameWidth - rectangles[i].width;
-
-            int maxHeight = 0;
-            for(int j = 0; j < i; j++) {
-                // check that the rectangle is below the current position and that its x is greater than the current maxHeight
-                if(rectangles[j].blx < sx + rectangles[i].width && rectangles[j].blx + rectangles[j].width > sx && rectangles[j].bly + rectangles[j].height > maxHeight) {
-                    maxHeight = rectangles[j].bly + rectangles[j].height;
-                }
-            }
+            int sy = containerHeight - rectangles[i].height;
 
             int maxWidth = 0;
             for(int j = 0; j < i; j++) {
-                // check that the rectangle is to the left of the current position and that its y is greater than the current maxWidth
-                if(rectangles[j].bly < maxHeight + rectangles[i].height && rectangles[j].bly + rectangles[j].height > maxHeight && rectangles[j].blx + rectangles[j].width > maxWidth) {
+                if(rectangles[j].bly + rectangles[j].height > sy && rectangles[j].blx + rectangles[j].width > maxWidth) {
                     maxWidth = rectangles[j].blx + rectangles[j].width;
+                }
+            }
+
+            int maxHeight = 0;
+            for(int j = 0; j < i; j++) {
+                if(rectangles[j].blx < maxWidth + rectangles[i].width && rectangles[j].blx + rectangles[j].width > maxWidth && rectangles[j].bly + rectangles[j].height > maxHeight) {
+                    maxHeight = rectangles[j].bly + rectangles[j].height;
                 }
             }
 
@@ -50,9 +54,9 @@ public class BottomLeft extends PackingStrategy {
 
             s.addRectangle(rectangles[i]);
 
-            // update the height of the frame
-            if(maxHeight + rectangles[i].height > height) {
-                height = maxHeight + rectangles[i].height;
+            // update the width of the frame
+            if(maxWidth + rectangles[i].width > width) {
+                width = maxWidth + rectangles[i].width;
             }
         }
 
