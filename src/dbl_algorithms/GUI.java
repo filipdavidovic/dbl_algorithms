@@ -13,6 +13,10 @@ import javax.swing.JLabel;
  * @author dianaepureanu
  */
 public class GUI {
+    
+    //change to false if you want to keep the height X width ratio, 
+    //otherwise the visualisation is stretched to the screen.
+    boolean adjustRatio = false;
 
     private State state;
     
@@ -26,13 +30,9 @@ public class GUI {
         window.setSize(new Dimension(600, 600));
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setVisible(true);
-        window.add(new DrawGrid(state));
+        window.add(new DrawGrid(state, adjustRatio));
         String fillRate = String.valueOf(state.fillRate);
-      //      g2.drawString(fillRate, 20, 20);
-//        JLabel label = new JLabel();
-//        label.setText(fillRate);
-//        label.setVisible(true);
-//        window.add(label);
+
     }
     
 }
