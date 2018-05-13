@@ -84,6 +84,7 @@ public class PackingSolver {
     }
 
     public static void main(String[] args) throws IOException {
-        new PackingSolver().run();
+        //new PackingSolver().run();
+        new TestGenerator().run();
     } 
 }

@@ -1,0 +1,11 @@
+#input, Strategy, Shape Filter, Container Height, Rotations Allowed, Number of rectangles, Input sorted, Fill rate
+1, BottomLeft, Big rectangles, 173, true, 77, false, 0.81195796, 
+1, DefaultStripe, Big rectangles, 173, true, 77, -, 0.76084673, 
+2, BottomLeft, Big rectangles, -1, false, 102, true, 0.5297958, 
+2, DefaultStripe, Big rectangles, -1, false, 102, -, 28.404444, 
+3, BottomLeft, Big rectangles, 136, false, 153, true, 0.8651959, 
+3, DefaultStripe, Big rectangles, 136, false, 153, -, 0.8651959, 
+4, BottomLeft, Big rectangles, -1, true, 107, false, 0.49651968, 
+4, DefaultStripe, Big rectangles, -1, true, 107, -, 29.343767, 
+5, BottomLeft, Big rectangles, 188, false, 54, false, 0.81586856, 
+5, DefaultStripe, Big rectangles, 188, false, 54, -, 0.81413037, 

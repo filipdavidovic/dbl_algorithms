@@ -24,6 +24,9 @@ public class State {
         index = 0;
         innerArea = 0;
     }
+    public float getFillRate() {
+        return this.fillRate;
+    }
 
     public void setIndex(int index) {
         this.index = index;
