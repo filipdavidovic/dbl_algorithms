@@ -12,20 +12,18 @@ import java.util.Arrays;
  * @author TijanaKlimovic
  */
 public class State {
-
     private Rectangle[] layout;
     int index;
     int layoutWidth;
     int layoutHeight;
     int innerArea; //Sum of areas of rectangles that were placed already
     float fillRate;
-
-    State(int size) {
+    
+    State(int size){
         layout = new Rectangle[size];
         index = 0;
         innerArea = 0;
     }
-
     public float getFillRate() {
         return this.fillRate;
     }
@@ -37,36 +35,36 @@ public class State {
     public int getIndex() {
         return this.index;
     }
-
-    public void addRectangle(Rectangle r) {
-        if (index < layout.length) {
+    
+    public void addRectangle(Rectangle r){
+        if(index < layout.length){
             layout[index] = r;
-            index++;
-        } else {
+            index ++;  
+        }else{
             System.out.println("Layout size exceeded!");
         }
         //update inner area and fillRate
-        innerArea = innerArea + (r.height * r.width);
-        System.out.println(innerArea);
-
+        innerArea = innerArea + (r.height*r.width);
+        fillRate = (float)innerArea/(float)this.getArea();
+        
+        
         //update height and width of the state
-        if (r.blx + r.width > layoutWidth) {
+        if(r.blx + r.width > layoutWidth){
             layoutWidth = r.blx + r.width;
         }
-        if (r.bly + r.height > layoutHeight) {
+        if(r.bly + r.height > layoutHeight){
             layoutHeight = r.bly + r.height;
         }
-        fillRate = (float) innerArea / (float) this.getArea();
-        System.out.println(this.getArea());
+        
     }
-
-    public int getArea() {
-        return this.layoutHeight * this.layoutWidth;
+    
+    public int getArea(){
+        return this.layoutHeight*this.layoutWidth;
     }
-
+    
     public boolean doesOverlap(Rectangle r) {
-        for (int i = 0; i < index; i++) {
-            if (layout[i].blx < r.blx + r.width && layout[i].blx + layout[i].width > r.blx && layout[i].bly < r.bly + r.height && layout[i].bly + layout[i].height > r.bly) {
+        for(int i = 0; i < index; i++) {
+            if(layout[i].blx < r.blx + r.width && layout[i].blx + layout[i].width > r.blx && layout[i].bly < r.bly + r.height && layout[i].bly + layout[i].height > r.bly) {
                 return true;
             }
         }
@@ -84,7 +82,7 @@ public class State {
 
     public Rectangle[] getLayoutClone() {
         Rectangle[] ret = new Rectangle[this.layout.length];
-        for (int i = 0; i < index; i++) {
+        for(int i = 0; i < index; i++) {
             ret[i] = this.layout[i].clone();
         }
         return ret;
@@ -117,5 +115,5 @@ public class State {
 
         return clone;
     }
-
+    
 }
