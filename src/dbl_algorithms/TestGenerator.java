@@ -58,7 +58,7 @@ public class TestGenerator {
     }
   
     
-    public void run() throws IOException { 
+    public void run() throws IOException, CloneNotSupportedException { 
         
         String COMMA_DELIMITER = ", ";
         String NEW_LINE_SEPARATOR = "\n";

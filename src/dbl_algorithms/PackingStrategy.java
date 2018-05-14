@@ -13,6 +13,6 @@ import java.io.IOException;
  * @author dianaepureanu
  */
 public abstract class PackingStrategy {
-    
-    protected abstract State pack() throws IOException, FileNotFoundException;
+
+    protected abstract State pack() throws IOException, FileNotFoundException, CloneNotSupportedException;
 }
