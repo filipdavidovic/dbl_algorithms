@@ -14,48 +14,44 @@ import java.util.Iterator;
  */
 public class Packer {
 
-    private final ArrayList<Node> root = new ArrayList();
+     private final ArrayList<Rectangle> root = new ArrayList();
 
-    public Packer(int numofpackets, double w, double h) {
-        for(int i = 0; i< numofpackets;i++){
-            this.root.add(new Node(0, 0, w, h));
-        }        
+    public Packer(int w, int h) {
+            this.root.add(new Rectangle(w, h, 0, 0));
     }
     
 
-    public void fit(ArrayList<Node> blocks) {
-        Node node;
-        Node block;
-        Iterator<Node> blockItr = blocks.iterator();
+    public void fit(ArrayList<Rectangle> blocks) {
+        Rectangle node;
+        Rectangle block;
+        Iterator<Rectangle> blockItr = blocks.iterator();
         int n=0;
         while (blockItr.hasNext()) {
             block = blockItr.next();
-            if ((node = this.findNode(this.root.get(n), block.w, block.h))!=null) {
-                block.fit = this.splitNode(node, block.w, block.h);
-                if(node.isroot){
-                    block.fit.isroot = true;
-                }
+            if ((node = this.findRectangle(this.root.get(n), block.width, block.height))!=null) {
+                block.fit = this.splitRectangle(node, block.width, block.height);
+                
             }else{
                 n++;
             }
         }
     }
 
-    public Node findNode(Node root, double w, double h) {
+    public Rectangle findRectangle(Rectangle root, int w, int h) {
         if (root.used) {
-            Node right = findNode(root.right, w, h);
-            return (right != null ? right : findNode(root.down, w, h));
-        } else if ((w <= root.w) && (h <= root.h)) {
+            Rectangle right = findRectangle(root.right, w, h);
+            return (right != null ? right : findRectangle(root.down, w, h));
+        } else if ((w <= root.width) && (h <= root.height)) {
             return root;
         } else {
             return null;
         }
     }
 
-    public Node splitNode(Node node, double w, double h) {
+    public Rectangle splitRectangle(Rectangle node, int w, int h) {
         node.used = true;
-        node.down = new Node(node.x, node.y + h, node.w, node.h - h);
-        node.right = new Node(node.x + w, node.y, node.w - w, h);
+        node.down = new Rectangle( node.width, node.height - h, node.blx, node.bly + h);
+        node.right = new Rectangle(node.width - w, h, node.blx + w, node.bly);
         return node;
     }
 

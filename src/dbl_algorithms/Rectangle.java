@@ -10,18 +10,20 @@ package dbl_algorithms;
  * @author TijanaKlimovic
  */
 public class Rectangle {
-    int width;
-    int height;
-    int blx;    // bottom left x
-    int bly;    // bottom left y
+    public int width;
+    public int height;
+    public int blx;    // bottom left x
+    public int bly;    // bottom left y
     boolean rotated;    //
-    
+    public boolean used = false;
+    public Rectangle right = null;
+    public Rectangle down = null;
+    public Rectangle fit = null;
     Rectangle(int width, int height){
         //default
         this.blx = -1;
         this.bly = -1;
         this.rotated = false;
-        
         this.height = height;        
         this.width = width;
     }
