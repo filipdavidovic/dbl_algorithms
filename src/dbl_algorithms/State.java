@@ -18,12 +18,14 @@ public class State {
     int layoutHeight;
     int innerArea; //Sum of areas of rectangles that were placed already
     float fillRate;
+    int rectNumber;
     
     State(int size){
         layout = new Rectangle[size];
         index = 0;
         innerArea = 0;
         fillRate = 0;
+        rectNumber = 0;
     }
     public float getFillRate() {
         return this.fillRate;
@@ -38,6 +40,7 @@ public class State {
     }
     
     public void addRectangle(Rectangle r){
+        rectNumber++;
         if(index < layout.length){
             layout[index] = r;
             index ++;  
@@ -46,16 +49,13 @@ public class State {
         }
         //update inner area and fillRate
         innerArea = innerArea + (r.height*r.width);
-        fillRate = (float)innerArea/(float)this.getArea();
         
         
         //update height and width of the state
-        if(r.blx + r.width > layoutWidth){
-            layoutWidth = r.blx + r.width;
-        }
-        if(r.bly + r.height > layoutHeight){
-            layoutHeight = r.bly + r.height;
-        }
+
+        this.layoutWidth = Math.max(layoutWidth, r.blx + r.width);
+        this.layoutHeight = Math.max(layoutHeight, r.bly + r.height);
+        fillRate = (float)innerArea/(float)this.getArea();
         
     }
     

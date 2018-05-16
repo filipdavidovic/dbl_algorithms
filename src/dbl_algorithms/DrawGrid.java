@@ -21,10 +21,13 @@ public class DrawGrid extends JPanel {
     State state;
     int sheight;
     int swidth;
+    boolean adjustRatio;
+    boolean displayPackage;
     
-    public DrawGrid(State s, boolean adjustRatio) {
+    public DrawGrid(State s, boolean adjustRatio, boolean displayPackage) {
         this.state = s;
-        
+        this.adjustRatio = adjustRatio;
+        this.displayPackage =  displayPackage;
         if (adjustRatio) {
             this.sheight = s.layoutHeight;
             this.swidth = s.layoutWidth;
@@ -49,6 +52,7 @@ public class DrawGrid extends JPanel {
         colors[13] = new Color(66,170,155,170);  
     }
     
+    @Override
     public void paint(Graphics g) {
 
         Rectangle[] layout = state.getLayout();
@@ -56,39 +60,52 @@ public class DrawGrid extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         Dimension dim = super.getSize();
         
+       
+         
+        
         //proportions based on the current dimensions
         //of the window so that everything is always visible
-        int xunit = (int)((int)dim.width / (int)swidth);
-        int yunit = (int)((int)dim.height / (int)sheight);
+        double xunit = ((double)dim.width / (double)swidth);
+        double yunit = ((double)dim.height / (double)sheight);
         
-        if (xunit < 1){
-            xunit = 1;
+        if (!adjustRatio) {
+            int smallest = Math.min(dim.width, dim.height);
+            xunit = ((double)smallest / (double)swidth);
+            yunit = ((double)smallest / (double)sheight);
         }
-        if (yunit < 1){
-            yunit = 1;
-        }
+
         
+         
         for (int i = 0; i< layout.length; i++){
             //select random color from the array
             int  r = rand.nextInt(colors.length);
             g2.setColor(colors[r]);
             
             //compute dimensions
-            int ulx = (layout[i].blx)*xunit;
-            int uly = (( sheight - layout[i].bly )- layout[i].height)*yunit;
-            int width = layout[i].width * xunit;
-            int height = layout[i].height * yunit;
+            int ulx = (int)((layout[i].blx)*xunit);
+            int uly = (int)((( sheight - layout[i].bly )- layout[i].height)*yunit);
+            int width = (int)(layout[i].width * xunit);
+            int height = (int)(layout[i].height * yunit);
 
             g2.fillRect(ulx, uly, width , height);              
         }
         
+        if (displayPackage) {
+            int alpha = 255; // 50% transparent
+            Color myColour = new Color(255, 255, 255, alpha);
+            g2.setColor(myColour);
+            g2.fillRect(0, dim.height -(int)(state.getLayoutHeight()*yunit), 
+                    (int)(state.getLayoutWidth()*xunit) , 
+                    (int)(state.getLayoutHeight()*yunit));
+        }
+      
         String fillRate = String.valueOf(state.fillRate);
         g.setFont(monoFont);
         g.setColor(Color.BLACK);
         FontMetrics fm = g.getFontMetrics();
         int w = fm.stringWidth(fillRate);
         int h = fm.getAscent();
-        g.drawString(fillRate, dim.width - xunit -w, 4*yunit);
+        g.drawString(fillRate, dim.width - (int)xunit -w, 4*(int)yunit+h);
         
         
         
