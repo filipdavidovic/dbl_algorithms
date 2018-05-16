@@ -25,7 +25,7 @@ public class TestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final int RANDOM_TEST_CASES = 5;
+    final int RANDOM_TEST_CASES = 1000;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int RANDOM_NR_RECTANGLES = 201;
     final int RANDOM_WIDTH = 201;
@@ -79,8 +79,8 @@ public class TestGenerator {
                     containerHeight = minDimensionSize + 
                             rand.nextInt(RANDOM_CONTAINER_HEIGHT - minDimensionSize);
                 } else {
-                //should be at least 1
-                containerHeight = 1 + rand.nextInt(RANDOM_CONTAINER_HEIGHT - 1);
+                //should be at least 2
+                containerHeight = 2 + rand.nextInt(RANDOM_CONTAINER_HEIGHT - 2);
                 }
             }
             //generate random boolean values for rotations
@@ -173,7 +173,7 @@ public class TestGenerator {
                 }
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(s.getFillRate()));
-                fileWriter.append(COMMA_DELIMITER);
+                //fileWriter.append(COMMA_DELIMITER);
                 
                 //print same stuff -- for debugging
                 System.out.println("Input number: " + count);

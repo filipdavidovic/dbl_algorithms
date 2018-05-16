@@ -23,6 +23,7 @@ public class State {
         layout = new Rectangle[size];
         index = 0;
         innerArea = 0;
+        fillRate = 0;
     }
     public float getFillRate() {
         return this.fillRate;
