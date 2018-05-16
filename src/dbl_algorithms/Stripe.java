@@ -18,12 +18,14 @@ public class Stripe {
     final int width;
     int y;
     int height;
+    InsertionSortListStripe instance;
 
     Stripe(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        instance = new InsertionSortListStripe();
     }
 
     private boolean check(Rectangle r) {
@@ -33,15 +35,24 @@ public class Stripe {
         return false;
     }
 
-    public boolean add(Rectangle r, List<Stripe> list) {
+    public boolean add(Rectangle r, List<Stripe> list, int minWidth, int minHeight) {
         if (check(r)) {
             r.setPosition(x, y);
-            if (r.width < width) {
+
+            if (width - r.width >= minWidth || r.height >= minHeight) {
                 Stripe stripe = new Stripe(x + r.width, y, width - r.width, r.height);
                 list.add(stripe);
+                instance.sort(stripe, list);
             }
-            y += r.height;
-            height -= r.height;
+
+            list.remove(this);
+            if (height - r.height >= minHeight) {
+                y += r.height;
+                height -= r.height;
+                instance.sort(this, list);
+            }/* else {
+                list.remove(this);
+            }*/
             return true;
         }
         return false;

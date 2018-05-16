@@ -41,7 +41,7 @@ public class InsertionSortTest {
      * Test of sort method, of class InsertionSort.
      */
     @Test
-    public void testSort() {
+    public void testSort() throws CloneNotSupportedException{
         System.out.println("sort");
         Rectangle[] rectangles = new Rectangle[3];
         Rectangle a = new Rectangle(3, 3);

@@ -29,7 +29,10 @@ public class DefaultStripe extends PackingStrategy {
     }
 
     @Override
-    protected State pack() throws IOException, FileNotFoundException {
+    protected State pack() throws IOException, FileNotFoundException, UnsupportedOperationException, CloneNotSupportedException {
+        if (containerHeight == -1) {
+            throw new UnsupportedOperationException("not fixed height");
+        }
         InsertionSort instance = new InsertionSort();
         if (rotationsAllowed) {
             for (Rectangle r : rectangles) {
@@ -38,11 +41,18 @@ public class DefaultStripe extends PackingStrategy {
                 }
             }
         }
+        /*for (int i = 0; i < rectangles.length; i++) {
+            System.out.println(rectangles[i].width + " " + rectangles[i].height + " " + rectangles[i].rotated);
+        }*/
         rectangles = instance.sort(rectangles);
+        /*for (int i = 0; i < rectangles.length; i++) {
+            System.out.println(rectangles[i].width + " " + rectangles[i].height + " " + rectangles[i].rotated);
+        }*/
         State state = new State(rectangles.length);
 
         List<Stripe> list = new ArrayList<>();
-        
+        int minWidth = instance.getMinWidth();
+        int minHeight = instance.getMinHeight();
 
         for (Rectangle r : rectangles) {
             if (list.isEmpty()) {
@@ -50,7 +60,7 @@ public class DefaultStripe extends PackingStrategy {
             } else {
                 boolean added = false;
                 for (Stripe s : list) {
-                    if (s.add(r, list)) {
+                    if (s.add(r, list, minWidth, minHeight)) {
                         state.addRectangle(r);
                         added = true;
                         break;
@@ -67,9 +77,9 @@ public class DefaultStripe extends PackingStrategy {
 
     /*
     creates a new stripe at the bottom of maximum height
-    */
+     */
     void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list) {
-        //System.out.println(llx);
+
         Stripe stripe = new Stripe(llx, 0, r.width, containerHeight);
         stripe.add(r);
         state.addRectangle(r);

@@ -13,28 +13,30 @@ import java.io.InputStreamReader;
  *
  * @author dianaepureanu
  */
-/** CONTEXT. */
+/**
+ * CONTEXT.
+ */
 public class PackingSolver {
-    
+
     PackingStrategy strategy;
     private GUI drawing;
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     /**
-     * read first 3 lines of input and select the strategy
-     * currently it always chooses PackingSolver by default
+     * read first 3 lines of input and select the strategy currently it always
+     * chooses PackingSolver by default
      */
-    public PackingSolver () {
+    public PackingSolver() {
 //        this.strategy = new DefaultStrategy();
     }
 
-    private void run() {
+    private void run() throws CloneNotSupportedException {
         try {
             /* input */
             // container height: {free, fixed x}
             int containerHeight;
             String containerHeightString = br.readLine().split("container height: ")[1];
-            if(containerHeightString.equals("free")) {
+            if (containerHeightString.equals("free")) {
                 containerHeight = -1;
             } else {
                 containerHeight = Integer.parseInt(containerHeightString.split(" ")[1]);
@@ -46,9 +48,9 @@ public class PackingSolver {
             // number of rectangles: n
             int numberOfRectangles = Integer.parseInt(br.readLine().split("number of rectangles: ")[1]); // n
             // rectangle input
-            Rectangle[] rectangles = new Rectangle [numberOfRectangles];
+            Rectangle[] rectangles = new Rectangle[numberOfRectangles];
 
-            for(int i = 0; i < numberOfRectangles; i++) {
+            for (int i = 0; i < numberOfRectangles; i++) {
                 String[] input = br.readLine().split(" ");
                 rectangles[i] = new Rectangle(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
             }
@@ -58,18 +60,17 @@ public class PackingSolver {
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
-            
+
             drawing = new GUI(s);
             drawing.run();
 
-            
         } catch (IOException e) {
             System.out.println(e.toString());
         }
     }
-    
+
     private void printOutput(Rectangle[] layout, int containerHeight, boolean rotationsAllowed) {
-  
+
         System.out.println("container height: " + containerHeight);
         System.out.println("rotations allowed: " + rotationsAllowed);
         System.out.println("number of rectangles: " + layout.length);
@@ -83,8 +84,8 @@ public class PackingSolver {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        //new PackingSolver().run();
-        new TestGenerator().run();
-    } 
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
+        new PackingSolver().run();
+        //new TestGenerator().run();
+    }
 }

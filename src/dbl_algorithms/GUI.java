@@ -32,7 +32,7 @@ public class GUI {
         window.setVisible(true);
         window.add(new DrawGrid(state, adjustRatio));
         String fillRate = String.valueOf(state.fillRate);
-
+        System.out.println(fillRate);
     }
     
 }
