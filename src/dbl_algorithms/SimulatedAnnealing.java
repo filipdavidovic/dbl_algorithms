@@ -19,6 +19,7 @@ public class SimulatedAnnealing extends PackingStrategy{
     private int successfulMutations; // # of successful mutations with a single temperature value
     private int consecutiveMutations; // # of total mutations with a single temperature value
     private State current; // current state that the strategy is in
+    private State best;
 
     SimulatedAnnealing(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles, int delta) throws IOException {
         // set final variables according to the number of rectangles in the input
@@ -34,6 +35,7 @@ public class SimulatedAnnealing extends PackingStrategy{
         this.temperature = delta * 4; // TODO: test this number
         this.bl = new BottomLeft(containerHeight, false, rectangles, false);
         this.current = bl.pack();
+        this.best = this.current; // TODO: check
         this.successfulMutations = 0;
         this.consecutiveMutations = 0;
     }
@@ -47,7 +49,7 @@ public class SimulatedAnnealing extends PackingStrategy{
                 mutate();
             }
         }
-        return current;
+        return best;
     }
 
     /**
@@ -82,6 +84,11 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             State state = bl.pack();
 
+            // TODO: might not be necessary
+            if(best.getLayoutWidth() > state.getLayoutWidth()) {
+                best = state;
+            }
+
             int delta = currentWidth - state.getLayoutWidth();
 
             // if mutation is not good enough, return to the previous state
@@ -105,6 +112,11 @@ public class SimulatedAnnealing extends PackingStrategy{
             rectangles[i].rotate();
 
             State state = bl.pack();
+
+            // TODO: might not be necessary
+            if(best.getLayoutWidth() > state.getLayoutWidth()) {
+                best = state;
+            }
 
             int delta = currentWidth - state.getLayoutWidth();
 

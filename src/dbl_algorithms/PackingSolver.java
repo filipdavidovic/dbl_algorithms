@@ -76,7 +76,7 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+            strategy = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles, maxWidth - minWidth);
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
