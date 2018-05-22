@@ -50,13 +50,33 @@ public class PackingSolver {
             // rectangle input
             Rectangle[] rectangles = new Rectangle[numberOfRectangles];
 
+            int maxWidth = 0;
+            int minWidth = Integer.MAX_VALUE;
+            int maxHeigth = 0;
+            int minHeight = Integer.MAX_VALUE;
             for (int i = 0; i < numberOfRectangles; i++) {
                 String[] input = br.readLine().split(" ");
-                rectangles[i] = new Rectangle(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
+                int width = Integer.parseInt(input[0]);
+                int height = Integer.parseInt(input[1]);
+                rectangles[i] = new Rectangle(width, height);
+
+                // populate extreme value variables
+                if(width > maxWidth) {
+                    maxWidth = width;
+                }
+                if(width < minWidth) {
+                    minWidth = width;
+                }
+                if(height > maxHeigth) {
+                    maxHeigth = height;
+                }
+                if(height < minHeight) {
+                    minHeight = height;
+                }
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+            strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
 
             State s = strategy.pack();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);

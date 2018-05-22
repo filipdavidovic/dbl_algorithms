@@ -10,7 +10,6 @@ public class BruteForce extends PackingStrategy {
     private int containerHeight;
     private boolean rotationsAllowed;
     private Rectangle[] rectangles;
-    private List<int[]> permutations = new ArrayList<>();
 
     BruteForce(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
@@ -18,74 +17,50 @@ public class BruteForce extends PackingStrategy {
         this.rectangles = rectangles;
     }
 
-    private void heapPermutation(int a[], int size, int n) {
-        // if size becomes 1 then prints the obtained
-        // permutation
-        if (size == 1) {
-            int[] arr = new int[a.length];
-            for(int i = 0; i < a.length; i++) {
-                arr[i] = a[i];
-            }
-            permutations.add(arr);
-        }
-
-        for (int i=0; i < size; i++)
-        {
-            heapPermutation(a, size-1, n);
-
-            // if size is odd, swap first and last
-            // element
-            if (size % 2 == 1)
-            {
-                int temp = a[0];
-                a[0] = a[size-1];
-                a[size-1] = temp;
-            }
-            // If size is even, swap ith and last
-            // element
-            else
-            {
-                int temp = a[i];
-                a[i] = a[size-1];
-                a[size-1] = temp;
-            }
-        }
-    }
-
     @Override
     protected State pack() throws IOException, FileNotFoundException {
 
         State state = null;
 
-        int[] a = new int[rectangles.length];
-        for(int i = 0; i < a.length; i++) {
-            a[i] = i;
-        }
-        heapPermutation(a, a.length, a.length);
+        List<Rectangle[]> permutations = (new HeapPermutation(rectangles)).permute(this.rotationsAllowed);
 
         if(containerHeight > 0) {
-            for(int[] b : permutations) {
+
+            for(Rectangle[] b : permutations) {
                 Rectangle[] permutation = new Rectangle[rectangles.length];
                 for(int i = 0; i < permutation.length; i++) {
-                    permutation[i] = rectangles[b[i]];
+                    permutation[i] = b[i].clone();
                 }
 
-                BottomLeft bl = new BottomLeft(containerHeight, rotationsAllowed, permutation, false);
-
-                State s = bl.pack();
-
-                if(state == null || s.getArea() < state.getArea()) {
-                    state = s;
+                if(rotationsAllowed) {
+                    // get rotation permutations for the current rectangle permutation
+                    AbstractPermutation rotationPermutation = new RotationPermutation(permutation);
+                    List<Rectangle[]> rotationPermutations = rotationPermutation.permute(true);
+                    // try each of them out
+                    for(Rectangle[] c : rotationPermutations) {
+                        BottomLeft bl = new BottomLeft(containerHeight, rotationsAllowed, c, false);
+                        State s = bl.pack();
+                        // select the best one
+                        if(state == null || s.getArea() < state.getArea()) {
+                            state = s;
+                        }
+                    }
+                } else {
+                    BottomLeft bl = new BottomLeft(containerHeight, rotationsAllowed, permutation, false);
+                    State s = bl.pack();
+                    if(state == null || s.getArea() < state.getArea()) {
+                        state = s;
+                    }
                 }
             }
         } else {
-            for(int[] b : permutations) {
+            for(Rectangle[] b : permutations) {
                 Rectangle[] permutation = new Rectangle[rectangles.length];
                 for(int i = 0; i < permutation.length; i++) {
-                    permutation[i] = rectangles[b[i]].clone();
+                    permutation[i] = b[i].clone();
                 }
 
-                State s = bru(permutation);
+                State s = freeHeightPack(new State(rectangles.length), permutation, 0);
 
                 if(state == null || s.getArea() < state.getArea()) {
                     state = s;
@@ -101,13 +76,16 @@ public class BruteForce extends PackingStrategy {
 
         List<State> states = new ArrayList<>();
         states.add(new State(permutation.length));
+
         Rectangle temp = permutation[0].clone();
         temp.setPosition(0, 0);
         states.get(0).addRectangle(temp);
+
         List<State> newStates = new ArrayList<>();
 
         for(int rect = 1; rect < permutation.length; rect++) {
             Rectangle rectangle = permutation[rect];
+
             for(int st = 0; st < states.size(); st++) {
                 Rectangle[] stateLayout = states.get(st).getLayout();
                 for (int i = 0; i < states.get(st).getIndex(); i++) {
@@ -116,6 +94,7 @@ public class BruteForce extends PackingStrategy {
                     State stateClone;
                     Rectangle rectangleClone;
 
+                    // no-rotation
                     stateClone = states.get(st).clone();
                     rectangleClone = rectangle.clone();
                     rectangleClone.setPosition(stateRectangle.blx, stateRectangle.bly + stateRectangle.height);
@@ -130,6 +109,28 @@ public class BruteForce extends PackingStrategy {
                     if (!stateClone.doesOverlap(rectangleClone)) {
                         stateClone.addRectangle(rectangleClone);
                         newStates.add(stateClone);
+                    }
+
+                    // rotation
+                    if(rotationsAllowed) {
+                        stateClone = states.get(st).clone();
+                        rectangleClone = rectangle.clone();
+
+                        rectangleClone.rotate();
+
+                        rectangleClone.setPosition(stateRectangle.blx, stateRectangle.bly + stateRectangle.height);
+                        if (!stateClone.doesOverlap(rectangleClone)) {
+                            stateClone.addRectangle(rectangleClone);
+                            newStates.add(stateClone);
+                        }
+
+                        stateClone = states.get(st).clone();
+                        rectangleClone = rectangle.clone();
+                        rectangleClone.setPosition(stateRectangle.blx + stateRectangle.width, stateRectangle.bly);
+                        if (!stateClone.doesOverlap(rectangleClone)) {
+                            stateClone.addRectangle(rectangleClone);
+                            newStates.add(stateClone);
+                        }
                     }
                 }
             }
@@ -147,5 +148,79 @@ public class BruteForce extends PackingStrategy {
         }
 
         return state;
+    }
+
+    private State freeHeightPack(State state, Rectangle[] permutation, int n) {
+        if(n == 0) {
+            permutation[0].setPosition(0 ,0);
+            state.addRectangle(permutation[0]);
+            return freeHeightPack(state, permutation, n + 1);
+        }
+
+        if(n == rectangles.length) {
+            return state.clone();
+        }
+
+        State best = null;
+
+        int index = state.getIndex();
+
+        Rectangle[] placedRectangles = state.getLayout();
+        for(int j = 0; j < index; j++) { // placed rectangles loop
+
+            State s = null;
+
+            /* no-rotation */
+            // top-left
+            permutation[n].setPosition(placedRectangles[j].blx, placedRectangles[j].bly + placedRectangles[j].height);
+            if(!state.doesOverlap(permutation[n])) {
+                state.addRectangle(permutation[n]);
+                s = freeHeightPack(state, permutation, n + 1);
+                state.removeRectangle();
+            }
+            if(s != null && (best == null || s.getArea() < best.getArea())) {
+                best = s;
+            }
+
+            // bottom-right
+            permutation[n].setPosition(placedRectangles[j].blx + placedRectangles[j].width, placedRectangles[j].bly);
+            if (!state.doesOverlap(permutation[n])) {
+                state.addRectangle(permutation[n]);
+                s = freeHeightPack(state, permutation, n + 1);
+                state.removeRectangle();
+            }
+            if(s != null && (best == null || s.getArea() < best.getArea())) {
+                best = s;
+            }
+
+            /* rotation */
+            if(rotationsAllowed) {
+                permutation[n].rotate();
+
+                // top-left
+                permutation[n].setPosition(placedRectangles[j].blx, placedRectangles[j].bly + placedRectangles[j].height);
+                if (!state.doesOverlap(permutation[n])) {
+                    state.addRectangle(permutation[n]);
+                    s = freeHeightPack(state, permutation, n + 1);
+                    state.removeRectangle();
+                }
+                if(s != null && (best == null || s.getArea() < best.getArea())) {
+                    best = s;
+                }
+
+                // bottom-right
+                permutation[n].setPosition(placedRectangles[j].blx + placedRectangles[j].width, placedRectangles[j].bly);
+                if (!state.doesOverlap(permutation[n])) {
+                    state.addRectangle(permutation[n]);
+                    s = freeHeightPack(state, permutation, n + 1);
+                    state.removeRectangle();
+                }
+                if(s != null && (best == null || s.getArea() < best.getArea())) {
+                    best = s;
+                }
+            }
+        }
+
+        return best;
     }
 }

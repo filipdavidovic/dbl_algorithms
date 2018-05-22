@@ -46,12 +46,15 @@ public class Rectangle {
         int temp = width;
         width = height;
         height = temp;
-        rotated = true;
-        //System.out.println(rotated);
+        rotated = !rotated;
     }
 
     @Override
     public Rectangle clone() {
-        return new Rectangle(this.width, this.height, this.blx, this.bly);
+        Rectangle clone = new Rectangle(this.width, this.height, this.blx, this.bly);
+        if(this.rotated) {
+            clone.rotated = true;
+        }
+        return clone;
     }
 }
