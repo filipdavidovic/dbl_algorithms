@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.LinkedList;
 import static dbl_algorithms.GetMin.*;
 
-
 /**
  * Implementation of First fit decreasing algorithm for Prototype 1 version 2
  *
@@ -35,7 +34,7 @@ public class DefaultStripe extends PackingStrategy {
         if (containerHeight == -1) {
             throw new UnsupportedOperationException("not fixed height");
         }
-        
+
         if (rotationsAllowed) {
             for (Rectangle r : rectangles) {
                 if (r.height > r.width) {
@@ -54,7 +53,7 @@ public class DefaultStripe extends PackingStrategy {
 
         for (Rectangle r : rectangles) {
             if (list.isEmpty()) {
-                createNewStripe(llx, r, state, list);
+                createNewStripe(llx, r, state, list, minWidth, minHeight);
             } else {
                 boolean added = false;
                 for (Stripe s : list) {
@@ -65,10 +64,18 @@ public class DefaultStripe extends PackingStrategy {
                     }
                 }
                 if (!added) {
-                    createNewStripe(llx, r, state, list);
+                    createNewStripe(llx, r, state, list, minWidth, minHeight);
                 }
             }
 
+        }
+
+        for (Rectangle r1 : rectangles) {
+            for (Rectangle r2 : rectangles) {
+                if (checkOverlap(r1, r2) && r1 != r2) {
+                    System.out.println("Overlap! " + r1.blx + " " + r1.bly + " " + r1.width + " " + r1.height + " " + r2.blx + " " + r2.bly + " " + r2.width + " " + r2.height);
+                }
+            }
         }
         return state;
     }
@@ -76,11 +83,25 @@ public class DefaultStripe extends PackingStrategy {
     /*
     creates a new stripe at the bottom of maximum height
      */
-    void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list) {
+    void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list, int minWidth, int minHeight) {
         Stripe stripe = new Stripe(llx, 0, r.width, containerHeight);
         stripe.add(r, list);
         this.llx += r.width;
-        state.addRectangle(r);     
+        state.addRectangle(r);
+
+    }
+
+    boolean checkOverlap(Rectangle r1, Rectangle r2) {
+        if (r1.blx >= r2.blx + r2.width || r2.blx >= r1.blx + r1.width) {
+            return false;
+        }
+
+        // If one rectangle is above other
+        if (r1.bly + r1.height <= r2.bly || r2.bly + r2.height <= r1.bly) {
+            return false;
+        }
+
+        return true;
     }
 
 }
