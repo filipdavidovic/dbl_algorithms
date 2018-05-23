@@ -11,9 +11,9 @@ import java.util.List;
  *
  * @author thanh
  */
-public class InsertionSortListStripe {
+public final class InsertionSortListStripe {
 
-    void sort(Stripe s, List<Stripe> list) {
+    public static void insertSort(Stripe s, List<Stripe> list) {
         int area = s.height * s.width;
         for (Stripe stripe : list) {
             int areaCheck = stripe.height * stripe.width;

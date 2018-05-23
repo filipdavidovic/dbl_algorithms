@@ -6,10 +6,11 @@
 package dbl_algorithms;
 
 import java.util.List;
+import static dbl_algorithms.InsertionSortListStripe.*;
 
 /**
  *
- * @author thanh
+ * @author thanh-dat
  */
 public class Stripe {
 
@@ -18,14 +19,12 @@ public class Stripe {
     final int width;
     int y;
     int height;
-    InsertionSortListStripe instance;
 
     Stripe(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        instance = new InsertionSortListStripe();
     }
 
     private boolean check(Rectangle r) {
@@ -41,18 +40,16 @@ public class Stripe {
 
             if (width - r.width >= minWidth || r.height >= minHeight) {
                 Stripe stripe = new Stripe(x + r.width, y, width - r.width, r.height);
-                list.add(stripe);
-                instance.sort(stripe, list);
+                insertSort(stripe, list);
             }
 
             list.remove(this);
             if (height - r.height >= minHeight) {
                 y += r.height;
                 height -= r.height;
-                instance.sort(this, list);
-            }/* else {
-                list.remove(this);
-            }*/
+                insertSort(this, list);
+            }
+
             return true;
         }
         return false;
@@ -62,15 +59,14 @@ public class Stripe {
     add rectangle to the stripe and adjust available stripe
     
      */
-    public boolean add(Rectangle r) {
+    public void add(Rectangle r, List<Stripe> list) {
         //width and x coord unchanged 
         //stripe is only adjusted vertically
-        if (check(r)) {
-            r.setPosition(x, y);
-            y += r.height;
-            height -= r.height;
-            return true;
-        }
-        return false;
+        r.setPosition(x, y);
+        list.remove(this);
+        y += r.height;
+        height -= r.height;
+        list.remove(this);
+        insertSort(this, list);
     }
 }
