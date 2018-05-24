@@ -91,7 +91,7 @@ public class DrawGrid extends JPanel {
         }
         
         if (displayPackage) {
-            int alpha = 255; // 50% transparent
+            int alpha = 0; // 50% transparent
             Color myColour = new Color(255, 255, 255, alpha);
             g2.setColor(myColour);
             g2.fillRect(0, dim.height -(int)(state.getLayoutHeight()*yunit), 

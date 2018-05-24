@@ -36,13 +36,20 @@ public class BinPacker extends PackingStrategy {
                 }
             }
         }
+        
+       
         rectangles = instance.sort(rectangles);
+         for (Rectangle r : rectangles) {
+                System.out.println(r.width+" "+r.height);
+                
+            }
         State state = new State(rectangles.length);
         Packer packer;
         if (containerHeight != -1) {
-            packer = new Packer(2000*rectangles.length , containerHeight*300);
+            System.out.print("FIXED HEIGHT NOT SUPPORTED");
+            packer = null;
         } else {
-            packer = new Packer(2000*rectangles.length , rectangles.length );
+            packer = new Packer((rectangles.length+670)/18 , rectangles.length );
         }
 
         ArrayList<Rectangle> result = new ArrayList<>();
@@ -52,8 +59,6 @@ public class BinPacker extends PackingStrategy {
         }
         packer.fit(result);
         for (int i = 0; i < rectangles.length; i++) {
-            // Rectangle r = new Rectangle(result.get(i).fit.blx,result.get(i).fit.bly , result.get(i).width, result.get(i).height);
-            //result.add(r);
             result.get(i).setPosition(result.get(i).fit.blx, result.get(i).fit.bly);
         }
 

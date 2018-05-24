@@ -10,6 +10,7 @@ package dbl_algorithms;
  * @author TijanaKlimovic
  */
 public class Rectangle {
+
     public int width;
     public int height;
     public int blx;    // bottom left x
@@ -19,42 +20,51 @@ public class Rectangle {
     public Rectangle right = null;
     public Rectangle down = null;
     public Rectangle fit = null;
-    Rectangle(int width, int height){
+
+    Rectangle(int width, int height) {
         //default
         this.blx = -1;
         this.bly = -1;
         this.rotated = false;
-        this.height = height;        
+        this.height = height;
         this.width = width;
     }
-    
-    Rectangle(int width, int height, int x, int y){
+
+    Rectangle(int width, int height, int x, int y) {
         //default
         this.blx = x;
         this.bly = y;
-        this.rotated = false;       
-        this.height = height;        
+        this.rotated = false;
+        this.height = height;
         this.width = width;
     }
-    
-    public void setPosition(int x, int y){
+
+    Rectangle(int width, int height, int x, int y, boolean used, Rectangle right, Rectangle down) {
+        this.blx = x;
+        this.bly = y;
+        this.rotated = false;
+        this.height = height;
+        this.width = width;
+        this.used = used;
+        this.down = down;
+        this.right = right;
+    }
+
+    public void setPosition(int x, int y) {
         this.blx = x;
         this.bly = y;
     }
-    
+
     public void rotate() {
         int temp = width;
         width = height;
         height = temp;
-        rotated = !rotated;
+        rotated = true;
+        //System.out.println(rotated);
     }
 
     @Override
     public Rectangle clone() {
-        Rectangle clone = new Rectangle(this.width, this.height, this.blx, this.bly);
-        if(this.rotated) {
-            clone.rotated = true;
-        }
-        return clone;
+        return new Rectangle(this.width, this.height, this.blx, this.bly);
     }
 }
