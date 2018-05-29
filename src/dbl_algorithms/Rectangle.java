@@ -17,6 +17,7 @@ public class Rectangle {
     public int bly;    // bottom left y
     boolean rotated;    //
     public boolean used = false;
+    public boolean placed = false; // used in the genetic algorithm
     public Rectangle right = null;
     public Rectangle down = null;
     public Rectangle fit = null;
@@ -63,6 +64,14 @@ public class Rectangle {
         //System.out.println(rotated);
     }
 
+    public boolean isPlaced() {
+        return placed;
+    }
+
+    public void setPlaced(boolean placed) {
+        this.placed = placed;
+    }
+    
     @Override
     public Rectangle clone() {
         return new Rectangle(this.width, this.height, this.blx, this.bly);
