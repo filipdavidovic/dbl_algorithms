@@ -59,7 +59,7 @@ public class PackingSolver {
                 int width = Integer.parseInt(input[0]);
                 int height = Integer.parseInt(input[1]);
                 rectangles[i] = new Rectangle(width, height);
-
+                rectangles[i].setInitialposition(i);
                 // populate extreme value variables
                 if(width > maxWidth) {
                     maxWidth = width;
@@ -76,9 +76,10 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
+            strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
 
             State s = strategy.pack();
+            s.reorder();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(s);
@@ -100,7 +101,12 @@ public class PackingSolver {
 
         System.out.println("placement of rectangles");
         for (int i = 0; i < layout.length; i++) {
-            System.out.println("no " + layout[i].blx + " " + layout[i].bly);
+            if (layout[i].rotated) {
+                System.out.print("yes ");
+            } else {
+                System.out.print("no ");
+            }
+            System.out.println(layout[i].blx + " " + layout[i].bly);
         }
     }
 

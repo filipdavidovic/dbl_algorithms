@@ -144,6 +144,6 @@ public class GeneticAlgorithm extends PackingStrategy {
 
             t++;  
         }
-        
+        return null;
     }
 }
