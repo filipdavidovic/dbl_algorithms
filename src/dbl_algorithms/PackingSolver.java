@@ -61,25 +61,65 @@ public class PackingSolver {
                 rectangles[i] = new Rectangle(width, height);
                 rectangles[i].setInitialposition(i);
                 // populate extreme value variables
-                if(width > maxWidth) {
+                if (width > maxWidth) {
                     maxWidth = width;
                 }
-                if(width < minWidth) {
+                if (width < minWidth) {
                     minWidth = width;
                 }
-                if(height > maxHeigth) {
+                if (height > maxHeigth) {
                     maxHeigth = height;
                 }
-                if(height < minHeight) {
+                if (height < minHeight) {
                     minHeight = height;
                 }
             }
 
             // TODO: make the selection for the proper algorithm
-            strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
 
+            switch (numberOfRectangles) {
+            case 3:
+                strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                break;
+            case 5:
+                strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                break;
+            case 10:
+                if (containerHeight == -1) {
+                    strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+                    break;
+                } else {
+                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                    break;
+                }
+            case 25:
+                if (containerHeight == -1) {
+                    strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+                    break;
+                } else {
+                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                    break;
+                }
+            case 5000:
+                if (containerHeight == -1) {
+                    strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
+                } else {
+                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                }
+                break;
+            case 10000: 
+                if (containerHeight == -1) {
+                    strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
+                } else {
+                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                }
+                break;
+            }
+
+
+            //strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
             State s = strategy.pack();
-            s.reorder();
+            //s.reorder();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(s);

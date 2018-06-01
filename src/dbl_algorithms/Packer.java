@@ -17,16 +17,18 @@ public class Packer {
     private Rectangle root;
 
     public Packer(int w, int h) {
-        root = new Rectangle(w,h,0,0);
+        root = new Rectangle(w, h, 0, 0);
     }
 
-    public void fit(ArrayList<Rectangle> rectangles) {
+    public void fit(ArrayList<Rectangle> rectangles, boolean growingBox) {
         Rectangle r;
         Rectangle rectangle;
-        if (rectangles.isEmpty()) {
-            root = new Rectangle(0, 0, 0, 0);
-        } else {
-            root = new Rectangle(rectangles.get(0).width, rectangles.get(0).height, 0, 0);
+        if (growingBox) {
+            if (rectangles.isEmpty()) {
+                root = new Rectangle(0, 0, 0, 0);
+            } else {
+                root = new Rectangle(rectangles.get(0).width, rectangles.get(0).height, 0, 0);
+            }
         }
         Iterator<Rectangle> rectangleItr = rectangles.iterator();
         while (rectangleItr.hasNext()) {
@@ -34,7 +36,9 @@ public class Packer {
             if ((r = findRectangle(root, rectangle.width, rectangle.height)) != null) {
                 rectangle.fit = splitRectangle(r, rectangle.width, rectangle.height);
             } else {
-                rectangle.fit = growRectangle( rectangle.width, rectangle.height);
+                if (growingBox) {
+                    rectangle.fit = growRectangle(rectangle.width, rectangle.height);
+                }
             }
         }
 
@@ -85,9 +89,8 @@ public class Packer {
         Rectangle r;
         Rectangle d = root;
         Rectangle ri = new Rectangle(width, root.height, root.width, 0);
-        root = new Rectangle
-             (root.width + width, root.height, 0, 0,true,ri,d);
-        
+        root = new Rectangle(root.width + width, root.height, 0, 0, true, ri, d);
+
         if ((r = findRectangle(root, width, height)) != null) {
             return splitRectangle(r, width, height);
         } else {
@@ -99,9 +102,8 @@ public class Packer {
         Rectangle r;
         Rectangle d = new Rectangle(root.width, height, 0, root.height);
         Rectangle ri = root;
-        root = new Rectangle(root.width, root.height + height, 0, 0, true, ri,d);
-        
-        
+        root = new Rectangle(root.width, root.height + height, 0, 0, true, ri, d);
+
         if ((r = findRectangle(root, width, height)) != null) {
             return splitRectangle(r, width, height);
         } else {
