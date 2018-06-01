@@ -15,6 +15,7 @@ public class Rectangle {
     public int height;
     public int blx;    // bottom left x
     public int bly;    // bottom left y
+    private int position = -1;
     boolean rotated;    //
     public boolean used = false;
     public boolean placed = false; // used in the genetic algorithm
@@ -61,7 +62,6 @@ public class Rectangle {
         width = height;
         height = temp;
         rotated = true;
-        //System.out.println(rotated);
     }
 
     public boolean isPlaced() {
@@ -72,8 +72,18 @@ public class Rectangle {
         this.placed = placed;
     }
     
+    public void setInitialposition(int i) {
+        position = i;
+    }
+    
+    public int getInitialposition() {
+        return position;
+    }
+
     @Override
     public Rectangle clone() {
-        return new Rectangle(this.width, this.height, this.blx, this.bly);
+        Rectangle rectangle = new Rectangle(this.width, this.height, this.blx, this.bly);
+        rectangle.setInitialposition(position);
+        return rectangle;
     }
 }

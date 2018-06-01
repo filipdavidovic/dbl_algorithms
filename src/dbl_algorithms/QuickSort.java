@@ -51,21 +51,9 @@ public class QuickSort implements AbstractSort {
     protected void swap(Rectangle r1, Rectangle r2) {
         Rectangle helper;
 
-        helper = new Rectangle(r1.width, r1.height);
-        helper.setPosition(r1.blx, r1.bly);
-        helper.rotated = r1.rotated;
-
-        r1.blx = r2.blx;
-        r1.bly = r2.bly;
-        r1.height = r2.height;
-        r1.rotated = r2.rotated;
-        r1.width = r2.width;
-
-        r2.blx = helper.blx;
-        r2.bly = helper.bly;
-        r2.height = helper.height;
-        r2.rotated = helper.rotated;
-        r2.width = helper.width;
+        helper = r1.clone();
+        r1 = r2.clone();
+        r2 = helper;
 
     }
 
