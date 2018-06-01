@@ -21,24 +21,38 @@ public class GeneticAlgorithm extends PackingStrategy {
     Individual[] population; // a population is an array of individuals
     int t; // counter which keeps track of number of loops
     Random r; // random variable
-    //OPTIMIZATION PARAMTERS
-    int m; // number of individuals in the population;
-    int MAX_LOOPS; // number of loops allowed until mutations are stopped;
-
-    
+    double bestFillRate;
+    double worstFillRate;
+    Individual bestIndividual;
+    Individual worstIndividual;
+    State bestState;
+    //OPTIMIZATION PARAMETERS
+    //EXAMPLE INPUT FROM THE PAPER: input = 25; m = 20; MAX_LOOPS = 2000; p_m = 0.4;
+    // number of individuals in the population;
+    //range [2, 20] or larger. 20 is found in a paper
+    int m;
+    // number of loops allowed until mutations are stopped;
+    //range [0, 2000] or larger. 2000 is found in a paper
+    int MAX_LOOPS;
+    // probability with which rectangles are rotated in a mutation
+    //range: [0, 1)
+    double p_m;
+  
     public GeneticAlgorithm(int containerHeight, boolean rotationsAllowed,
-            Rectangle[] rectangles) {
+            Rectangle[] rectangles, int m, int MAX_LOOPS, double p_m) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
         this.t = 1;
         this.r = new Random();
-        this.m = 200;
         this.population = new Individual[m];
+        this.m = 20;
+        this.MAX_LOOPS = 2000;
+        this.p_m = 0.4;
     }
     
      /**
-      * This function generates a random permutation of a[].
+      * This function generates a random permutation of the rectangles.
       */
     public void randomize( Rectangle[] rectangles, int n) {     
         // Start from the last element and swap one by one. We don't
@@ -54,13 +68,21 @@ public class GeneticAlgorithm extends PackingStrategy {
             rectangles[j] = temp;
         }
     }
-
+    /**
+     * This method creates the first generation of individuals
+     * @throws IOException 
+     */
     public void createFirstPopulation() throws IOException {
         //first individual is a permutation where rectangles are sorted
         //by decreasing width and placed in the container with BottomLeft
         bl = new BottomLeft(containerHeight, rotationsAllowed, rectangles, true);
         State firstIndividual_state = bl.pack(); // state of the first individual
+        //remember the best state seen so far
+        bestState = firstIndividual_state;
         double fitnessValue = 1.0 - firstIndividual_state.getFillRate();
+        //initialize the best and the worst permutations
+        bestFillRate = fitnessValue;
+        worstFillRate = fitnessValue;
         //create the first Individual instance
         population[0] = new Individual(rectangles, fitnessValue);
         //the rest of the individuals have as State a random permutation of the
@@ -71,8 +93,25 @@ public class GeneticAlgorithm extends PackingStrategy {
                     false);
             State randomIndividual_state = bl.pack();
             double randomFitnessValue = 1.0 - randomIndividual_state.getFillRate();
+            if (randomFitnessValue < worstFillRate) {
+                worstFillRate = randomFitnessValue;
+            }
+            // remember the best state seen so far
+            if (randomFitnessValue > bestFillRate) {
+                bestFillRate = randomFitnessValue;
+                bestState = randomIndividual_state;
+            }
             population[i] = new Individual(rectangles, randomFitnessValue);
-        }     
+        }
+        //get the best and the worst Individuals from the population
+        for (Individual ind : population) {
+            if (ind.getFitnessValue() == bestFillRate) {
+                bestIndividual = ind; 
+            } else if (ind.getFitnessValue() == worstFillRate) {
+                worstIndividual = ind;
+            }
+        }
+        
     }
     /**
      * Method which generates a new individual given the elements of two 
@@ -101,17 +140,38 @@ public class GeneticAlgorithm extends PackingStrategy {
                 rect.setPlaced(true);
                 q++;
             }
-        }
-        
+        }  
         return new_perm;    
     }
-    
+    /**
+     * This method swaps 2 random rectangles in a permutation.
+     * @param rectangles elements of the permutation
+     */
     public void mutationNormal(Rectangle[] rectangles) {
-        
+        int i = r.nextInt(rectangles.length);
+        int j = r.nextInt(rectangles.length);
+        while (i == j) {
+            j = r.nextInt(rectangles.length);
+        }
+        Rectangle aux = rectangles[i];
+        rectangles[i] = rectangles[j];
+        rectangles[j] = aux;
     }
     
+   /**
+    * This method rotates rectangles with a probability lower than p_m under the
+    * assumption that the rotations are allowed.It does not do anything if
+    * rotations are now allowed.
+    * @param rectangles elements of the permutation
+    */
     public void mutation(Rectangle[] rectangles) {
-        
+        if (rotationsAllowed == true) {
+            for (int i = 0; i < rectangles.length; i++) {
+                if (Math.random() < p_m) {
+                    rectangles[i].rotate();
+                }
+            }
+        }
     }
     
     @Override
@@ -128,7 +188,7 @@ public class GeneticAlgorithm extends PackingStrategy {
             // choose 2 random Individuals from the population
             Individual ind_A = population[i]; 
             Individual ind_B = population[j];
-            // apply 3 genetic operations on the offspring
+            // apply the 3 genetic operations on the offspring
             Rectangle[] new_perm = this.crossOver(ind_A, ind_B);
             mutationNormal(new_perm);
             mutation(new_perm);
@@ -141,9 +201,36 @@ public class GeneticAlgorithm extends PackingStrategy {
             double new_fitnessValue = 1.0 - new_state.getFillRate();
             //create the new Individual instance
             Individual newIndividual = new Individual(new_perm, new_fitnessValue);
-
+            
+            //if the new individual has a better fillRate than the worst
+            //individual from the population, then replace the worst individual
+            // with the new individual
+            if (newIndividual.getFitnessValue() > 
+                    worstIndividual.getFitnessValue()) {
+                worstIndividual = newIndividual;
+            }
+            //if it is not the case, do not change any individual and continue
+            //with the next iteration
+            //recompute the best and the worst FillRate for this generation
+            for (Individual ind: population) {
+                if (ind.getFitnessValue() > bestFillRate) {
+                    bestFillRate = ind.getFitnessValue();
+                } else if (ind.getFitnessValue() < worstFillRate) {
+                    worstFillRate = ind.getFitnessValue();
+                }
+            }
+            //recompute the best and the worst individuals
+            //for the current generation
+            for (Individual ind : population) {
+                if (ind.getFitnessValue() == bestFillRate) {
+                    bestIndividual = ind; 
+                } else if (ind.getFitnessValue() == worstFillRate) {
+                    worstIndividual = ind;
+                }
+            }
+            // increase the number of iterations   
             t++;  
         }
-        
+        return bestState;
     }
 }
