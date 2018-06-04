@@ -89,7 +89,7 @@ public class PackingSolver {
                     strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
                     break;
                 } else {
-                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                    strategy = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
                     break;
                 }
             case 25:
@@ -97,7 +97,7 @@ public class PackingSolver {
                     strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
                     break;
                 } else {
-                    strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                    strategy = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
                     break;
                 }
             case 5000:
@@ -151,6 +151,6 @@ public class PackingSolver {
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
         new PackingSolver().run();
-        //new TestGenerator().run();
+//        new TestGenerator().run();
     }
 }

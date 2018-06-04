@@ -64,7 +64,7 @@ public class Rectangle {
         int temp = width;
         width = height;
         height = temp;
-        rotated = true;
+        rotated = !rotated;
     }
 
     public boolean isPlaced() {
