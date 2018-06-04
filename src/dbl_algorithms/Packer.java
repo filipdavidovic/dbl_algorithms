@@ -15,9 +15,10 @@ import java.util.Iterator;
 public class Packer {
 
     private Rectangle root;
-
+    private int containerHeight;
     public Packer(int w, int h) {
         root = new Rectangle(w, h, 0, 0);
+        containerHeight = h;
     }
 
     public void fit(ArrayList<Rectangle> rectangles, boolean growingBox) {
@@ -27,7 +28,7 @@ public class Packer {
             if (rectangles.isEmpty()) {
                 root = new Rectangle(0, 0, 0, 0);
             } else {
-                root = new Rectangle(rectangles.get(0).width, rectangles.get(0).height, 0, 0);
+                root = new Rectangle(rectangles.get(0).width, Math.max(containerHeight,rectangles.get(0).height), 0, 0);
             }
         }
         Iterator<Rectangle> rectangleItr = rectangles.iterator();

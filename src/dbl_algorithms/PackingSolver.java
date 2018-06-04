@@ -86,7 +86,7 @@ public class PackingSolver {
                 break;
             case 10:
                 if (containerHeight == -1) {
-                    strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+                    strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
                     break;
                 } else {
                     strategy = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
@@ -94,7 +94,7 @@ public class PackingSolver {
                 }
             case 25:
                 if (containerHeight == -1) {
-                    strategy = new DefaultStrategy(containerHeight, rotationsAllowed, rectangles);
+                    strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
                     break;
                 } else {
                     strategy = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
@@ -116,7 +116,6 @@ public class PackingSolver {
                 break;
             }
 
-            //strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
             
             State s = strategy.pack();
 //            s.reorder();
