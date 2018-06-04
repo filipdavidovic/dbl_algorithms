@@ -64,14 +64,14 @@ public class TestGenerator {
         String NEW_LINE_SEPARATOR = "\n";
         String FILE_HEADER = "#input, Strategy, Shape Filter, Container Height, "
                 + "Rotations Allowed, Number of rectangles, Input sorted, "
-                + "Fill rate";
+                + "Fill rate, # Mutations";
         FileWriter fileWriter = new FileWriter("inputs.csv");
         fileWriter.append(FILE_HEADER);
         for (int count = 1; count <= RANDOM_TEST_CASES; count++){
             //generate random container height: free or fixed aka 0 or 1
             // if containerHeight  is 1 (fixed), then generate random height.
             listOfStrategies = new ArrayList<>();
-            containerHeight = rand.nextInt(2);
+            containerHeight = 1;
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -87,14 +87,15 @@ public class TestGenerator {
             rotationsAllowed = rand.nextBoolean();
             //generate random number of rectangles
             // set to be al least 5
-            numberOfRectangles = 5 + rand.nextInt(RANDOM_NR_RECTANGLES - 5);
+            numberOfRectangles = 10 + rand.nextInt(2) * 15;
+//            numberOfRectangles = 5 + rand.nextInt(RANDOM_NR_RECTANGLES - 5);
             //create array of rectangles to store all of them
             Rectangle[] rectangles = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
             for (int i = 0; i < numberOfRectangles; i++) {
                 if (containerHeight != -1) { 
                     // container height is fixed
-                    // set max random dimenion size to container height
+                    // set max random dimension size to container height
                     if (SQUARE_SHAPE){ 
                         int width = rand.nextInt(containerHeight);
                         int height = rand.nextInt(containerHeight);
@@ -124,7 +125,7 @@ public class TestGenerator {
                         int height = 1 + rand.nextInt(RANDOM_HEIGHT - 1);
                         rectangles[i] = new Rectangle(width, height);
                     }
-                    }
+                }
             }  
             //generate random boolean for 'sort' parameter -- check constructor of
             // BottomLeft if in doubt.
@@ -137,22 +138,38 @@ public class TestGenerator {
             // of all strategies individually;
 
             //add BottomLeft
-            PackingStrategy strategy_1 = new BottomLeft(this.getContainerHeight(), 
-                    this.isRotationsAllowed(),  rectangles, this.isSort());
-            listOfStrategies.add(strategy_1);
+//            PackingStrategy strategy_1 = new BottomLeft(this.getContainerHeight(), this.isRotationsAllowed(),  rectangles, this.isSort());
+//            listOfStrategies.add(strategy_1);
             //add DefaultStripe
-            PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
-            this.isRotationsAllowed(), rectangles);
+//            PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+//            listOfStrategies.add(strategy_2);
+            PackingStrategy strategy_1 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_2 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_3 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_4 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_5 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_6 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_7 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_8 = new SimulatedAnnealing(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
+            listOfStrategies.add(strategy_1);
             listOfStrategies.add(strategy_2);
+            listOfStrategies.add(strategy_3);
+            listOfStrategies.add(strategy_4);
+            listOfStrategies.add(strategy_5);
+            listOfStrategies.add(strategy_6);
+            listOfStrategies.add(strategy_7);
+            listOfStrategies.add(strategy_8);
+            int[] numMut = new int[] {100, 200, 300, 400, 500, 600, 700, 800};
             //write csv file
-            for (PackingStrategy strategy: listOfStrategies) {
+            for (int i = 0; i < listOfStrategies.size(); i++) {
+                PackingStrategy strategy = listOfStrategies.get(i);
                 State s = strategy.pack();
                 fileWriter.append(NEW_LINE_SEPARATOR);
                 fileWriter.append(String.valueOf(count));
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(strategy.getClass().getSimpleName());
                 fileWriter.append(COMMA_DELIMITER);
-                if (SQUARE_SHAPE){
+                if (SQUARE_SHAPE) {
                     fileWriter.append("Squares");
                 } else if (BIG_SIZE) {
                     fileWriter.append("Big rectangles");
@@ -166,35 +183,39 @@ public class TestGenerator {
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(this.getNumberOfRectangles()));
                 fileWriter.append(COMMA_DELIMITER);
-                if (strategy == strategy_1) {
-                    fileWriter.append(String.valueOf(this.isSort()));
-                } else {
-                    fileWriter.append('-');
-                }
+//                if (strategy == strategy_1) {
+//                    fileWriter.append(String.valueOf(this.isSort()));
+//                } else {
+//                    fileWriter.append('-');
+//                }
+                fileWriter.append('-');
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(s.getFillRate()));
-                //fileWriter.append(COMMA_DELIMITER);
-                
+                fileWriter.append(COMMA_DELIMITER);
+                fileWriter.append(String.valueOf(numMut[i]));
+
                 //print same stuff -- for debugging
                 System.out.println("Input number: " + count);
                 System.out.println("Strategy: " + strategy.getClass().getSimpleName());
-                if (SQUARE_SHAPE){
+                if (SQUARE_SHAPE) {
                     System.out.println("Shape filter: Squares");
                 } else if (BIG_SIZE) {
                     System.out.println("Shape filter: Big rectangles");
                 } else {
                     System.out.println("Shape filter: None");
                 }
-                
-                System.out.println("Container height: " + this.getContainerHeight() );
+
+                System.out.println("Container height: " + this.getContainerHeight());
                 System.out.println("Rotations allowed: " + this.isRotationsAllowed());
                 System.out.println("Number of rectangles:" + this.getNumberOfRectangles());
-                if (strategy == strategy_1) {
-                    System.out.println("Input sorted: " + this.isSort());
-                } else {
-                    System.out.println("Input sorted: -");
-                }
+//                if (strategy == strategy_1) {
+//                    System.out.println("Input sorted: " + this.isSort());
+//                } else {
+//                    System.out.println("Input sorted: -");
+//                }
+                System.out.println("Input sorted: -");
                 System.out.println("Fill rate: " + s.getFillRate());
+                System.out.println("# mutations: " + numMut[i]);
                 System.out.println();
             }
         }

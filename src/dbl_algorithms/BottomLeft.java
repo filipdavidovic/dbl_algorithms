@@ -28,7 +28,7 @@ public class BottomLeft extends PackingStrategy {
             QuickSort instance = new QuickSort();
             rectangles = instance.sort(rectangles);
         }
-        
+
         State s = new State(rectangles.length);
 
         int width = 0;

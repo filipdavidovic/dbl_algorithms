@@ -2,6 +2,8 @@ package dbl_algorithms;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class SimulatedAnnealing extends PackingStrategy{
@@ -14,14 +16,15 @@ public class SimulatedAnnealing extends PackingStrategy{
     private boolean rotationsAllowed;
     private Rectangle[] rectangles;
 
-    private BottomLeft bl; // packing strategy
+    private PackingStrategy bl; // packing strategy
     private float temperature; // energy of the system, determines whether newly created states are good enough to be kept
     private int successfulMutations; // # of successful mutations with a single temperature value
     private int consecutiveMutations; // # of total mutations with a single temperature value
+    private List<Integer> rotatable = new ArrayList<>();
     private State current; // current state that the strategy is in
     private State best;
 
-    SimulatedAnnealing(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles, int delta) throws IOException {
+    SimulatedAnnealing(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) throws IOException, CloneNotSupportedException {
         // set final variables according to the number of rectangles in the input
         this.MAX_CONSECUTIVE_MUTATIONS = 100 * rectangles.length;
         this.MAX_SUCCESSFUL_MUTATIONS = 10 * rectangles.length;
@@ -31,19 +34,26 @@ public class SimulatedAnnealing extends PackingStrategy{
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
 
-        // set variables used bby this packing method
-        this.temperature = delta * 4; // TODO: test this number
-        this.bl = new BottomLeft(containerHeight, false, rectangles, false);
+        // set variables used by this packing method
+        this.temperature = 220f; // 220f
+        this.bl = new BottomLeftSlide(containerHeight, false, rectangles, false);
         this.current = bl.pack();
-        this.best = this.current; // TODO: check
+        this.best = this.current;
         this.successfulMutations = 0;
         this.consecutiveMutations = 0;
+
+        if(rotationsAllowed) {
+            for(int i = 0; i < rectangles.length; i++) {
+                if(rectangles[i].width <= containerHeight) {
+                    rotatable.add(i);
+                }
+            }
+        }
     }
 
     @Override
     protected State pack() throws IOException, FileNotFoundException, CloneNotSupportedException {
-        // TODO: determine the correct number of temperature changes
-        for(int i = 1; i <= 100; i++) {
+        for(int i = 1; i <= 400; i++) {
             // mutate until the temperature decreases
             while(!checkDecreaseTemperature()) {
                 mutate();
@@ -67,10 +77,10 @@ public class SimulatedAnnealing extends PackingStrategy{
      *
      * @throws IOException - required by the BottomLeft packing method.
      */
-    private void mutate() throws IOException {
+    private void mutate() throws IOException, CloneNotSupportedException {
         int currentWidth = current.getLayoutWidth();
 
-        if(!rotationsAllowed || rand.nextBoolean()) {
+        if((!rotationsAllowed || rand.nextBoolean()) && rotatable.size() == 0) {
             int i = rand.nextInt(rectangles.length - 1);
             int j = rand.nextInt(rectangles.length - 1);
             while(i == j) {
@@ -106,7 +116,7 @@ public class SimulatedAnnealing extends PackingStrategy{
                 successfulMutations++;
             }
         } else {
-            int i = rand.nextInt(rectangles.length - 1);
+            int i = rotatable.get(rand.nextInt(rotatable.size()));
 
             // rotate the rectangle in order to test the new permutation
             rectangles[i].rotate();
