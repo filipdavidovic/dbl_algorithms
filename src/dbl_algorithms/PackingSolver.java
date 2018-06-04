@@ -115,11 +115,10 @@ public class PackingSolver {
                 }
                 break;
             }
+            
 
-
-            //strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
             State s = strategy.pack();
-            //s.reorder();
+            s.reorder();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(s);

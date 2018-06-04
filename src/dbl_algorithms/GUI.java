@@ -16,7 +16,7 @@ public class GUI {
     
     //change to false if you want to keep the height X width ratio, 
     //otherwise the visualisation is stretched to the screen.
-    boolean adjustRatio = true;
+    boolean adjustRatio = false;
     boolean displayPackage = false;
 
     private State state;

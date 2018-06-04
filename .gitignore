@@ -1,1 +1,3 @@
 /dist/
+*.properties
+*.xml
