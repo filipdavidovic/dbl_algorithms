@@ -24,7 +24,6 @@ public class StripeNonFixed extends PackingStrategy {
         for (int i = minSide; i > minSide / 2.5; i -= minSide/10) { //arbitrary choice of container heights
             PackingStrategy strategy = new DefaultStripe(i, rotationsAllowed, rectangles); 
             State newState = strategy.pack();
-            System.out.println(newState.fillRate);
             //check if newState is better
             if (newState.fillRate > bestState.fillRate) {
                 bestState = newState;
