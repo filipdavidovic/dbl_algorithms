@@ -94,9 +94,8 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             State state = bl.pack();
 
-            // TODO: might not be necessary
             if(best.getLayoutWidth() > state.getLayoutWidth()) {
-                best = state;
+                best = state.clone();
             }
 
             int delta = currentWidth - state.getLayoutWidth();
@@ -123,9 +122,8 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             State state = bl.pack();
 
-            // TODO: might not be necessary
             if(best.getLayoutWidth() > state.getLayoutWidth()) {
-                best = state;
+                best = state.clone();
             }
 
             int delta = currentWidth - state.getLayoutWidth();
