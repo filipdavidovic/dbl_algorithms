@@ -47,11 +47,13 @@ public class QuickSort implements AbstractSort {
         return index + 1;
     }
 
+
     protected void swap(Rectangle[] rectangles, int r1, int r2) {
         Rectangle helper;      
         helper = rectangles[r1].clone();
         rectangles[r1] = rectangles[r2].clone();
         rectangles[r2] = helper.clone();
+
 
     }
 
