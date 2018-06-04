@@ -14,12 +14,12 @@ import java.io.IOException;
  */
 public class QuickSort implements AbstractSort {
 
+    
     @Override
     public Rectangle[] sort(Rectangle[] rectangles) {
 
         int size = rectangles.length;
         quickSort(rectangles, 0, size - 1);
-
         return rectangles;
     }
 
@@ -36,24 +36,22 @@ public class QuickSort implements AbstractSort {
     protected int partition(Rectangle[] rectangles, int lo, int hi) {
         int pivot = rectangles[hi].width;
         int index = lo - 1;
-
         for (int i = lo; i < hi; i++) {
 
             if (rectangles[i].width > pivot) {
                 index++;
-                swap(rectangles[index], rectangles[i]);
+                swap(rectangles,index, i);
             }
         }
-        swap(rectangles[index + 1], rectangles[hi]);
+        swap(rectangles, index + 1, hi);
         return index + 1;
     }
 
-    protected void swap(Rectangle r1, Rectangle r2) {
-        Rectangle helper;
-
-        helper = r1.clone();
-        r1 = r2.clone();
-        r2 = helper;
+    protected void swap(Rectangle[] rectangles, int r1, int r2) {
+        Rectangle helper;      
+        helper = rectangles[r1].clone();
+        rectangles[r1] = rectangles[r2].clone();
+        rectangles[r2] = helper.clone();
 
     }
 

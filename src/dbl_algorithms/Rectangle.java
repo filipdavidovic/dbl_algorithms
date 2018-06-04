@@ -72,6 +72,7 @@ public class Rectangle {
         this.placed = placed;
     }
     
+    //order in the intial array
     public void setInitialposition(int i) {
         position = i;
     }
@@ -83,6 +84,9 @@ public class Rectangle {
     @Override
     public Rectangle clone() {
         Rectangle rectangle = new Rectangle(this.width, this.height, this.blx, this.bly);
+        rectangle.rotated = this.rotated;
+        rectangle.used = this.used;
+        rectangle.placed = this.placed;
         rectangle.setInitialposition(position);
         return rectangle;
     }
