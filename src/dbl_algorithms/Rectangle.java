@@ -30,7 +30,6 @@ public class Rectangle {
         this.rotated = false;
         this.height = height;
         this.width = width;
-        
     }
 
     Rectangle(int width, int height, int x, int y) {
@@ -40,7 +39,6 @@ public class Rectangle {
         this.rotated = false;
         this.height = height;
         this.width = width;
-        
     }
 
     Rectangle(int width, int height, int x, int y, boolean used, Rectangle right, Rectangle down) {
@@ -52,7 +50,6 @@ public class Rectangle {
         this.used = used;
         this.down = down;
         this.right = right;
-        
     }
 
     public void setPosition(int x, int y) {
@@ -75,6 +72,7 @@ public class Rectangle {
         this.placed = placed;
     }
     
+    //order in the intial array
     public void setInitialposition(int i) {
         position = i;
     }
@@ -87,7 +85,9 @@ public class Rectangle {
     public Rectangle clone() {
         Rectangle rectangle = new Rectangle(this.width, this.height, this.blx, this.bly);
         rectangle.rotated = this.rotated;
-        rectangle.position = this.position;
+        rectangle.used = this.used;
+        rectangle.placed = this.placed;
+        rectangle.setInitialposition(position);
         return rectangle;
     }
 }
