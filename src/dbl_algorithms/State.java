@@ -154,10 +154,6 @@ public class State {
     public void reorder() {
         Rectangle[] temp = new Rectangle[layout.length];
         for (Rectangle rectangle : layout) {
-            if (rectangle.rotated) {
-                rectangle.rotate();
-                rectangle.rotated = true;
-            }
             temp[rectangle.getInitialposition()] = rectangle;
         }
         setLayout(temp);

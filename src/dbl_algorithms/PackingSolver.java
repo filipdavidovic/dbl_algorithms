@@ -76,7 +76,6 @@ public class PackingSolver {
             }
 
             // TODO: make the selection for the proper algorithm
-
             switch (numberOfRectangles) {
             case 3:
                 strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
@@ -107,7 +106,7 @@ public class PackingSolver {
                     strategy = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
                 }
                 break;
-            case 10000: 
+            case 10000:
                 if (containerHeight == -1) {
                     strategy = new BinPacker(containerHeight, rotationsAllowed, rectangles);
                 } else {
@@ -116,9 +115,8 @@ public class PackingSolver {
                 break;
             }
 
-            
             State s = strategy.pack();
-//            s.reorder();
+            s.reorder();
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(s);
@@ -135,7 +133,11 @@ public class PackingSolver {
         System.out.println("rotations allowed: " + rotationsAllowed);
         System.out.println("number of rectangles: " + layout.length);
         for (Rectangle rectangle : layout) {
-            System.out.println(rectangle.width + " " + rectangle.height);
+            if (rectangle.rotated) {
+                System.out.println(rectangle.height + " " + rectangle.width);
+            } else {
+                System.out.println(rectangle.width + " " + rectangle.height);
+            }
         }
 
         System.out.println("placement of rectangles");
@@ -151,6 +153,6 @@ public class PackingSolver {
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
         new PackingSolver().run();
-//        new TestGenerator().run();
+        //new TestGenerator().run();
     }
 }
