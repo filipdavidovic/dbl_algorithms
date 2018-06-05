@@ -12,16 +12,17 @@ import java.util.LinkedList;
 import static dbl_algorithms.GetMin.*;
 
 /**
- * Implementation of First fit decreasing algorithm for Prototype 1 version 2
+ * Best-Fit Decreasing Width Stripe Packing algorithm Used when: inputSize =
+ * 5000 containerHeight = fixed rotationsAllowed = true/false
  *
- * @author TijanaKlimovic
+ * @author Tijana Klimovic and Thanh-Dat
  */
 public class DefaultStripe extends PackingStrategy {
 
     int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
-    int llx = 0;  //lower left x coordinate
+    int llx = 0;  //lower left x coordinate 
 
     DefaultStripe(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
@@ -30,11 +31,15 @@ public class DefaultStripe extends PackingStrategy {
     }
 
     @Override
-    protected State pack() throws IOException, FileNotFoundException, UnsupportedOperationException, CloneNotSupportedException {
+    protected State pack() throws IOException, FileNotFoundException, UnsupportedOperationException,
+            CloneNotSupportedException {
+        //special value (-1) used to indicate if no fixed height is given at input
         if (containerHeight == -1) {
             throw new UnsupportedOperationException("not fixed height");
         }
 
+        //if rotations are allowed, rotate each rectangle s.t. 
+        //the biggest dimension is parallel to the 'x axis'(width)
         if (rotationsAllowed) {
             for (Rectangle r : rectangles) {
                 if (r.height > r.width) {
@@ -43,17 +48,33 @@ public class DefaultStripe extends PackingStrategy {
             }
         }
 
+        //sort the rectangles in decreasing order by horizonal dimension (width)
         QuickSort instance = new QuickSort();
         rectangles = instance.sort(rectangles);
 
+        // initiate the state and the list of stripes
         State state = new State(rectangles.length);
         List<Stripe> list = new LinkedList<>();
+
+        //get smallest width and smallest height (note dimensions may not belong to same rectangle)
         int minWidth = getMinWidth(rectangles);
         int minHeight = getMinHeight(rectangles);
 
+        //iterate through all rectangles 
         for (Rectangle r : rectangles) {
+            //at the start of the iteration the list is empty so we add to it a stripe with 
+            //hegiht= containerHeight and width = width of widest rectangle
+            //(rectangle at the begining of the sorted rectangles list)
             if (list.isEmpty()) {
                 createNewStripe(llx, r, state, list, minWidth, minHeight);
+
+                //if the list of stripes is not empty we check if we can fit the rectangle 
+                //in any of the existing stripes. 
+                //If the rectangle can fit into more than one stripe then
+                //we add it to a stripe to which it would fit best
+                //best fit implies that in the case of the rectangle being able to fit 
+                //in many stripes the stripe with smallest area is chosen for its placement
+                //the state is updated with the placement of this r
             } else {
                 boolean added = false;
                 for (Stripe s : list) {
@@ -63,6 +84,8 @@ public class DefaultStripe extends PackingStrategy {
                         break;
                     }
                 }
+                //if the rectangle didn't fit in any of the stripes in list 
+                //then create a new stripe with width = r.width and hegiht= containerHeight
                 if (!added) {
                     createNewStripe(llx, r, state, list, minWidth, minHeight);
                 }
@@ -70,38 +93,29 @@ public class DefaultStripe extends PackingStrategy {
 
         }
 
-        for (Rectangle r1 : rectangles) {
-            for (Rectangle r2 : rectangles) {
-                if (checkOverlap(r1, r2) && r1 != r2) {
-                    System.out.println("Overlap! " + r1.blx + " " + r1.bly + " " + r1.width + " " + r1.height + " " + r2.blx + " " + r2.bly + " " + r2.width + " " + r2.height);
-                }
-            }
-        }
         return state;
     }
 
-    /*
-    creates a new stripe at the bottom of maximum height
+    /**
+     * creates a new stripe at the bottom of maximum height
+     *
+     * @param llx - x coordinate of stripe's lower left corner
+     * @param r - rectangle to be added to stripe
+     * @param state - state of rectangle placement
+     * @param list - list of stripes
+     * @param minWidth width of minimum stripe
+     * @param minHeight height of minimum stripe
+     * @modifies list, state, r
      */
-    void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list, int minWidth, int minHeight) {
+    void createNewStripe(int llx, Rectangle r, State state, List<Stripe> list, int minWidth,
+            int minHeight) {
+        //create new stripe 
         Stripe stripe = new Stripe(llx, 0, r.width, containerHeight);
-        stripe.add(r, list);
+        //add the stripe to the list
+        stripe.add(r, list, minWidth, minHeight);
         this.llx += r.width;
         state.addRectangle(r);
 
-    }
-
-    boolean checkOverlap(Rectangle r1, Rectangle r2) {
-        if (r1.blx >= r2.blx + r2.width || r2.blx >= r1.blx + r1.width) {
-            return false;
-        }
-
-        // If one rectangle is above other
-        if (r1.bly + r1.height <= r2.bly || r2.bly + r2.height <= r1.bly) {
-            return false;
-        }
-
-        return true;
     }
 
 }

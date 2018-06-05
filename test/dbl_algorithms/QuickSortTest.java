@@ -74,7 +74,7 @@ public class QuickSortTest {
         Rectangle r2 = new Rectangle(1,1);
         
         QuickSort instance = new QuickSort();
-        instance.swap(r1, r2);
+        //instance.swap(r1, r2);
         // TODO review the generated test code and remove the default call to fail.
         System.out.println("r1 "+r1.width);
         System.out.println("r2 "+r2.width);
