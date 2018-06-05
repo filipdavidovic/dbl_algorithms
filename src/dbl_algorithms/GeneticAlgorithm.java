@@ -38,6 +38,16 @@ public class GeneticAlgorithm extends PackingStrategy {
     //range: [0, 1)
     double p_m;
   
+    /**
+     * GeneticAlgorithm constructor 
+     * 
+     * @param containerHeight fixed height of the container given at input
+     * @param rotationsAllowed true if rotations of rectangles are allowed, else false
+     * @param rectangles list of rectangles given at input
+     * @param m number of permutations
+     * @param MAX_LOOPS number of offspring generated
+     * @param p_m mutation rate
+     */
     public GeneticAlgorithm(int containerHeight, boolean rotationsAllowed,
             Rectangle[] rectangles, int m, int MAX_LOOPS, double p_m) {
         this.containerHeight = containerHeight;
@@ -60,10 +70,10 @@ public class GeneticAlgorithm extends PackingStrategy {
         for (int i = n-1; i > 0; i--) {
              
             // Pick a random index from 0 to i
-            int j = r.nextInt(i);
+            int j = r.nextInt(i);                                                    // i think the randomness can be improved because the probabilities of swaps decrement as we decrease i also i is at max equal to n-1, which means the maximum swap interval considered is [1,n-1) although it should include n-1?
              
             // Swap arr[i] with the element at random index
-            Rectangle temp = rectangles[i];
+            Rectangle temp = rectangles[i];                                         //new order of rectangles is overwritting the original order? need it maintained for the printing
             rectangles[i] = rectangles[j];
             rectangles[j] = temp;
         }
@@ -81,7 +91,7 @@ public class GeneticAlgorithm extends PackingStrategy {
         bestState = firstIndividual_state;
         double fitnessValue = 1.0 - firstIndividual_state.getFillRate();
         //initialize the best and the worst permutations
-        bestFillRate = fitnessValue;
+        bestFillRate = fitnessValue;                                                    //consider m=1
         worstFillRate = fitnessValue;
         //create the first Individual instance
         population[0] = new Individual(rectangles, fitnessValue);
@@ -103,7 +113,7 @@ public class GeneticAlgorithm extends PackingStrategy {
             }
             population[i] = new Individual(rectangles, randomFitnessValue);
         }
-        //get the best and the worst Individuals from the population
+        //get the best and the worst Individuals from the population                    //why is this dynamically not taken care of? namely when saving the worstCase save the index of that individual
         for (Individual ind : population) {
             if (ind.getFitnessValue() == bestFillRate) {
                 bestIndividual = ind; 
@@ -128,15 +138,17 @@ public class GeneticAlgorithm extends PackingStrategy {
         Rectangle[] a_perm = a.getPermutation();
         Rectangle[] b_perm = b.getPermutation();
         Rectangle[] new_perm = new Rectangle[a_perm.length];
-        int p = 1 + r.nextInt(rectangles.length - 1);
+        int p = 1 + r.nextInt(rectangles.length - 1);       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
         int q = 1 + r.nextInt(rectangles.length - 1);
         for (int i = 0; i < q; i++) {
             new_perm[i] = a_perm[(p+i) % a_perm.length];
+            //mark as already placed in permutation
             a_perm[(p+i) % a_perm.length].setPlaced(true);
         }
         for(Rectangle rect : b_perm) {
+            //all unmarked rectangles place in unaltered order in the remaining slots in permuatation
             if (rect.isPlaced() == false) {
-                new_perm[q] = rect;
+                new_perm[q] = rect;                                                     //if original rectangles used may cause trouble in next population iteratons
                 rect.setPlaced(true);
                 q++;
             }
@@ -147,8 +159,8 @@ public class GeneticAlgorithm extends PackingStrategy {
      * This method swaps 2 random rectangles in a permutation.
      * @param rectangles elements of the permutation
      */
-    public void mutationNormal(Rectangle[] rectangles) {
-        int i = r.nextInt(rectangles.length);
+    public void mutationNormal(Rectangle[] rectangles) {                                //maybe this mutation can be better, more elements exchanged
+        int i = r.nextInt(rectangles.length);           
         int j = r.nextInt(rectangles.length);
         while (i == j) {
             j = r.nextInt(rectangles.length);

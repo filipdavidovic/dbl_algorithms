@@ -24,6 +24,12 @@ public class DefaultStripe extends PackingStrategy {
     Rectangle[] rectangles;
     int llx = 0;  //lower left x coordinate 
 
+    /**
+     * DefaultStripe constructor
+     * @param containerHeight fixed height of the container given at input
+     * @param rotationsAllowed true if rotations of rectangles are allowed, else false
+     * @param rectangles list of rectangles given at input
+     */
     DefaultStripe(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
