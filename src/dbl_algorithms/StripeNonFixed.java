@@ -22,7 +22,8 @@ public class StripeNonFixed extends PackingStrategy {
         int minSide = getMinAreaSide(); //used to define the container height
         State bestState = new State(rectangles.length); //keep track of best encountered state
         int stepSize = 25;
-        for (int i = minSide; i >= getMaxHeight(rectangles); i -= minSide/stepSize) { //arbitrary choice of container heights
+        //arbitrary choice of container heights
+        for (int i = minSide; i >= getMaxHeight(rectangles); i -= minSide/stepSize) { 
             PackingStrategy strategy = new DefaultStripe(i, rotationsAllowed, rectangles); 
             State newState = strategy.pack();
             //check if newState is better
@@ -46,11 +47,18 @@ public class StripeNonFixed extends PackingStrategy {
         return (int) Math.sqrt(result);
     }
     
-    public static int getMaxHeight(Rectangle[] r) {
+    /*
+    * get max height for all the rectangles(for lowerbound of container height)
+    */
+    public int getMaxHeight(Rectangle[] r) {
         int max = 0;
         for (int i = 0; i < r.length; i++) {
             if (r[i].height > max) {
                 max = r[i].height;
+            }
+            //check for width if rotations are allowed
+            if (r[i].width > max && rotationsAllowed) {
+                max = r[i].width;
             }
         }
         return max;
