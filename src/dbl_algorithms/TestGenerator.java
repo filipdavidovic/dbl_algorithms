@@ -139,6 +139,7 @@ public class TestGenerator {
             //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
+<<<<<<< HEAD
             listOfStrategies.add(strategy_2);
             
 //            //add BruteForce
@@ -158,6 +159,13 @@ public class TestGenerator {
             
             
             
+=======
+           // listOfStrategies.add(strategy_2);
+            //add GeneticAlgorithm
+            PackingStrategy strategy_3 = new GeneticAlgorithm(this.getContainerHeight(),
+                    true, rectangles, 20, 2000, 0.4);
+            listOfStrategies.add(strategy_3);
+>>>>>>> origin/master
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
                 //make sure for stripe non fixed the height is really non-fixed
