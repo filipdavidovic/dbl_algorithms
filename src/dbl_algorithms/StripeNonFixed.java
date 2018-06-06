@@ -12,7 +12,7 @@ public class StripeNonFixed extends PackingStrategy {
     boolean rotationsAllowed;
     Rectangle[] rectangles;
 
-    StripeNonFixed(boolean rotationsAllowed, Rectangle[] rectangles) {
+    StripeNonFixed(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
     }
@@ -23,9 +23,10 @@ public class StripeNonFixed extends PackingStrategy {
         State bestState = new State(rectangles.length); //keep track of best encountered state
         int stepSize = 25;
         //arbitrary choice of container heights
-        for (int i = minSide; i >= getMaxHeight(rectangles); i -= minSide/stepSize) { 
+        for (int i = 2 * minSide; i >= getMaxHeight(rectangles); i -= minSide/stepSize) { 
             PackingStrategy strategy = new DefaultStripe(i, rotationsAllowed, rectangles); 
             State newState = strategy.pack();
+            //System.out.println(i + " " + newState.fillRate);
             //check if newState is better
             if (newState.fillRate > bestState.fillRate) {
                 bestState = newState;
@@ -55,10 +56,6 @@ public class StripeNonFixed extends PackingStrategy {
         for (int i = 0; i < r.length; i++) {
             if (r[i].height > max) {
                 max = r[i].height;
-            }
-            //check for width if rotations are allowed
-            if (r[i].width > max && rotationsAllowed) {
-                max = r[i].width;
             }
         }
         return max;
