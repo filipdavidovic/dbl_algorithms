@@ -21,7 +21,8 @@ public class StripeNonFixed extends PackingStrategy {
     protected State pack() throws IOException, FileNotFoundException, CloneNotSupportedException {
         int minSide = getMinAreaSide(); //used to define the container height
         State bestState = new State(rectangles.length); //keep track of best encountered state
-        for (int i = minSide; i > minSide / 2.5; i -= minSide/25) { //arbitrary choice of container heights
+        int stepSize = 25;
+        for (int i = minSide; i >= getMaxHeight(rectangles); i -= minSide/stepSize) { //arbitrary choice of container heights
             PackingStrategy strategy = new DefaultStripe(i, rotationsAllowed, rectangles); 
             State newState = strategy.pack();
             //check if newState is better
@@ -43,5 +44,15 @@ public class StripeNonFixed extends PackingStrategy {
             result += r.height * r.width;    
         }
         return (int) Math.sqrt(result);
+    }
+    
+    public static int getMaxHeight(Rectangle[] r) {
+        int max = 0;
+        for (int i = 0; i < r.length; i++) {
+            if (r[i].height > max) {
+                max = r[i].height;
+            }
+        }
+        return max;
     }
 }
