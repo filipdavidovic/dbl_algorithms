@@ -146,7 +146,7 @@ public class TestGenerator {
            // listOfStrategies.add(strategy_2);
             //add GeneticAlgorithm
             PackingStrategy strategy_3 = new GeneticAlgorithm(this.getContainerHeight(),
-                    true, rectangles, 20, 2000, 0.4);
+                    false, rectangles, 20, 2000, 0.4);
             listOfStrategies.add(strategy_3);
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
