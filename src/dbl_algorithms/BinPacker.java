@@ -20,11 +20,12 @@ public class BinPacker extends PackingStrategy {
     int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
-
+   
     BinPacker(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
+       
     }
 
     protected State pack() throws IOException, FileNotFoundException {
@@ -42,11 +43,9 @@ public class BinPacker extends PackingStrategy {
        
         State state = new State(rectangles.length);//gonna be the result
 
-        boolean growingBox;
         Packer packer;
        
-            packer = new Packer(0, containerHeight);
-            growingBox = true;
+        packer = new Packer(containerHeight);
         
         ArrayList<Rectangle> result = new ArrayList<>();
         
@@ -55,10 +54,10 @@ public class BinPacker extends PackingStrategy {
             result.add(r);
         }
         
-        packer.fit(result, growingBox);
+        packer.fit(result);
         
         for (int i = 0; i < rectangles.length; i++) {
-            result.get(i).setPosition(result.get(i).fit.blx, result.get(i).fit.bly);
+                result.get(i).setPosition(result.get(i).fit.blx, result.get(i).fit.bly);
         }
 
         for (int i = 0; i < rectangles.length; i++) {
@@ -66,4 +65,6 @@ public class BinPacker extends PackingStrategy {
         }
         return state;
     }
+    
+        
 }
