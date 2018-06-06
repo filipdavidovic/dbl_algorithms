@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -139,7 +140,7 @@ public class TestGenerator {
             //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
-<<<<<<< HEAD
+            
             listOfStrategies.add(strategy_2);
             
 //            //add BruteForce
@@ -158,14 +159,11 @@ public class TestGenerator {
 //            listOfStrategies.add(strategy_5);
             
             
-            
-=======
-           // listOfStrategies.add(strategy_2);
             //add GeneticAlgorithm
-            PackingStrategy strategy_3 = new GeneticAlgorithm(this.getContainerHeight(),
-                    true, rectangles, 20, 2000, 0.4);
-            listOfStrategies.add(strategy_3);
->>>>>>> origin/master
+//            PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
+//                    true, rectangles, 20, 2000, 0.4);
+//            listOfStrategies.add(strategy_6);
+
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
                 //make sure for stripe non fixed the height is really non-fixed
@@ -232,5 +230,4 @@ public class TestGenerator {
 
     }
     
-
 }

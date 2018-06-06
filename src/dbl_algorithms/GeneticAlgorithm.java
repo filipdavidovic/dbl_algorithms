@@ -71,12 +71,12 @@ public class GeneticAlgorithm extends PackingStrategy {
         // need to run for the first element that's why i > 0
         for (int i = n-1; i > 0; i--) {
              
-            // Pick a random index from 0 to i
-            int j = r.nextInt(i);                                                    // i think the randomness can be improved because the probabilities of swaps decrement as we decrease i also i is at max equal to n-1, which means the maximum swap interval considered is [1,n-1) although it should include n-1?
+            // Pick a random index from 0 to n
+            int j = r.nextInt(n);                                                    // i think the randomness can be improved because the probabilities of swaps decrement as we decrease i also i is at max equal to n-1, which means the maximum swap interval considered is [1,n-1) although it should include n-1?
              
             // Swap arr[i] with the element at random index
-            Rectangle temp = rectangles[i];                                         //new order of rectangles is overwritting the original order? need it maintained for the printing
-            rectangles[i] = rectangles[j];
+            Rectangle temp = rectangles[i].clone();                                         //new order of rectangles is overwritting the original order? need it maintained for the printing
+            rectangles[i] = rectangles[j].clone();
             rectangles[j] = temp;
         }
     }
@@ -116,7 +116,11 @@ public class GeneticAlgorithm extends PackingStrategy {
                 bestFillRate = randomFitnessValue;
                 bestState = randomIndividual_state;
             }
-            population[i] = new Individual(rectangles, randomFitnessValue);
+            Rectangle[] instance = new Rectangle[rectangles.length];
+            for(int j = 0 ; j < rectangles.length; j++){
+                instance[j] = rectangles[j].clone();
+            }
+            population[i] = new Individual(instance, randomFitnessValue);
         }
         //get the best and the worst Individuals from the population                    //why is this dynamically not taken care of? namely when saving the worstCase save the index of that individual
         for (Individual ind : population) {
@@ -150,19 +154,28 @@ public class GeneticAlgorithm extends PackingStrategy {
         for (int k = 0; k < b_perm.length; k++) {
             b_perm[k] = b.getPermutation()[k].clone();
         }
-        Rectangle[] new_perm = new Rectangle[a_perm.length];
-        int p = 1 + r.nextInt(rectangles.length - 1);       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
-        int q = 1 + r.nextInt(rectangles.length - 1);
+        new_perm = new Rectangle[a_perm.length];
+        int p =  r.nextInt(rectangles.length );       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
+        int q =  r.nextInt(rectangles.length );
         for (int i = 0; i < q; i++) {
             new_perm[i] = a_perm[(p+i) % a_perm.length].clone();
             //mark as already placed in permutation
             a_perm[(p+i) % a_perm.length].setPlaced(true);
+            //copy this marking to the same number in the b_perm
+            for(int j = 0 ; j < b_perm.length ; j++){
+                if(a_perm[(p+i) % a_perm.length].height == b_perm[j].height && a_perm[(p+i) % a_perm.length].width == b_perm[j].width && a_perm[(p+i) % a_perm.length].rotated == b_perm[j].rotated){
+                    b_perm[j].setPlaced(true);
+                }
+            }
         }
         for(Rectangle rect : b_perm) {
             //all unmarked rectangles place in unaltered order in the remaining slots in permuatation
             if (rect.isPlaced() == false) {
                 new_perm[q] = rect.clone();                                                     //if original rectangles used may cause trouble in next population iteratons
                 rect.setPlaced(true);
+                if(q == rectangles.length - 1){
+                    break;
+                }
                 q++;
             }
         }     
@@ -177,9 +190,9 @@ public class GeneticAlgorithm extends PackingStrategy {
         while (i == j) {
             j = r.nextInt(rectangles.length);
         }
-        Rectangle aux = rectangles[i];
-        rectangles[i] = rectangles[j];
-        rectangles[j] = aux;
+        Rectangle aux = rectangles[i].clone();
+        rectangles[i] = rectangles[j].clone();
+        rectangles[j] = aux.clone();
     }
     
    /**
