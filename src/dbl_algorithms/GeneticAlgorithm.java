@@ -7,6 +7,7 @@ package dbl_algorithms;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -26,6 +27,7 @@ public class GeneticAlgorithm extends PackingStrategy {
     Individual bestIndividual;
     Individual worstIndividual;
     State bestState;
+    Rectangle[] new_perm;
     //OPTIMIZATION PARAMETERS
     //EXAMPLE INPUT FROM THE PAPER: input = 25; m = 20; MAX_LOOPS = 2000; p_m = 0.4;
     // number of individuals in the population;
@@ -95,6 +97,9 @@ public class GeneticAlgorithm extends PackingStrategy {
         worstFillRate = fitnessValue;
         //create the first Individual instance
         population[0] = new Individual(rectangles, fitnessValue);
+        //initialize worst and best individuals;
+        worstIndividual = new Individual(rectangles, fitnessValue);
+        bestIndividual = new Individual(rectangles, fitnessValue);
         //the rest of the individuals have as State a random permutation of the
         //rectangles; they are then placed in the container with BottomLeft
         for (int i = 1; i < m; i++) {
@@ -134,26 +139,33 @@ public class GeneticAlgorithm extends PackingStrategy {
      * @param b second Individual to be used in creating the new Individual
      * @return permutation consisting of elements from both a and b
      */
-    public Rectangle[] crossOver(Individual a, Individual b) throws IOException { 
-        Rectangle[] a_perm = a.getPermutation();
+    public void crossOver(Individual a, Individual b) throws IOException { 
+        //create deep copy of the first individual 
+        Rectangle[] a_perm = new Rectangle[rectangles.length];
+        for (int k = 0; k < a_perm.length; k++) {
+            a_perm[k] = a.getPermutation()[k].clone();
+        }
+        //create deep copy of the second individual
         Rectangle[] b_perm = b.getPermutation();
+        for (int k = 0; k < b_perm.length; k++) {
+            b_perm[k] = b.getPermutation()[k].clone();
+        }
         Rectangle[] new_perm = new Rectangle[a_perm.length];
         int p = 1 + r.nextInt(rectangles.length - 1);       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
         int q = 1 + r.nextInt(rectangles.length - 1);
         for (int i = 0; i < q; i++) {
-            new_perm[i] = a_perm[(p+i) % a_perm.length];
+            new_perm[i] = a_perm[(p+i) % a_perm.length].clone();
             //mark as already placed in permutation
             a_perm[(p+i) % a_perm.length].setPlaced(true);
         }
         for(Rectangle rect : b_perm) {
             //all unmarked rectangles place in unaltered order in the remaining slots in permuatation
             if (rect.isPlaced() == false) {
-                new_perm[q] = rect;                                                     //if original rectangles used may cause trouble in next population iteratons
+                new_perm[q] = rect.clone();                                                     //if original rectangles used may cause trouble in next population iteratons
                 rect.setPlaced(true);
                 q++;
             }
-        }  
-        return new_perm;    
+        }     
     }
     /**
      * This method swaps 2 random rectangles in a permutation.
@@ -200,8 +212,10 @@ public class GeneticAlgorithm extends PackingStrategy {
             // choose 2 random Individuals from the population
             Individual ind_A = population[i]; 
             Individual ind_B = population[j];
+            
             // apply the 3 genetic operations on the offspring
-            Rectangle[] new_perm = this.crossOver(ind_A, ind_B);
+            // make a deep copy of the rectangles array   
+            this.crossOver(ind_A, ind_B);
             mutationNormal(new_perm);
             mutation(new_perm);
             // convert the offspring into an Individual by first placing

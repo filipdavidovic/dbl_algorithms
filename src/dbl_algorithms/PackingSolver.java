@@ -152,7 +152,7 @@ public class PackingSolver {
     }
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
-        new PackingSolver().run();
-        //new TestGenerator().run();
+        //new PackingSolver().run();
+        new TestGenerator().run();
     }
 }

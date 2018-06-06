@@ -143,7 +143,11 @@ public class TestGenerator {
             //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
-            listOfStrategies.add(strategy_2);
+           // listOfStrategies.add(strategy_2);
+            //add GeneticAlgorithm
+            PackingStrategy strategy_3 = new GeneticAlgorithm(this.getContainerHeight(),
+                    true, rectangles, 20, 2000, 0.4);
+            listOfStrategies.add(strategy_3);
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
                 State s = strategy.pack();
