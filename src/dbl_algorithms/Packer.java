@@ -16,30 +16,36 @@ public class Packer {
 
     private Rectangle root;
     private int containerHeight;
-    public Packer(int w, int h) {
-        root = new Rectangle(w, h, 0, 0);
+  
+    public Packer(int h) {
+        root = new Rectangle(0, h, 0, 0);
         containerHeight = h;
+       
     }
 
-    public void fit(ArrayList<Rectangle> rectangles, boolean growingBox) {
+    public void fit(ArrayList<Rectangle> rectangles) {
         Rectangle r;
         Rectangle rectangle;
-        if (growingBox) {
-            if (rectangles.isEmpty()) {
-                root = new Rectangle(0, 0, 0, 0);
+
+        if (rectangles.isEmpty()) {
+            root = new Rectangle(0, 0, 0, 0);
+        } else {
+            if(containerHeight != -1){
+            root = new Rectangle(rectangles.get(0).width, containerHeight, 0, 0);
             } else {
-                root = new Rectangle(rectangles.get(0).width, Math.max(containerHeight,rectangles.get(0).height), 0, 0);
+                root = new Rectangle(rectangles.get(0).width, rectangles.get(0).height,0,0);
             }
         }
+
         Iterator<Rectangle> rectangleItr = rectangles.iterator();
         while (rectangleItr.hasNext()) {
             rectangle = rectangleItr.next();
             if ((r = findRectangle(root, rectangle.width, rectangle.height)) != null) {
                 rectangle.fit = splitRectangle(r, rectangle.width, rectangle.height);
             } else {
-                if (growingBox) {
-                    rectangle.fit = growRectangle(rectangle.width, rectangle.height);
-                }
+
+                rectangle.fit = growRectangle(rectangle.width, rectangle.height);
+
             }
         }
 
@@ -70,6 +76,9 @@ public class Packer {
     private Rectangle growRectangle(int width, int height) {
         boolean canGrowDown = (width <= root.width);
         boolean canGrowRight = (height <= root.height);
+        if(containerHeight!=-1){
+            canGrowDown = canGrowDown&&(root.height+height<containerHeight);
+        }
         boolean shouldGrowRight = (canGrowRight && (root.height >= (root.width + width)));
         boolean shouldGrowDown = (canGrowDown && (root.width >= (root.height + height)));
 
