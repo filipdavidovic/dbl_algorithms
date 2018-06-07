@@ -15,6 +15,10 @@ import java.util.Random;
  * @author dianaepureanu
  */
 public class GeneticAlgorithm extends PackingStrategy {
+    // to be made local in crossOver used for debug
+
+    
+    
     int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
@@ -146,25 +150,39 @@ public class GeneticAlgorithm extends PackingStrategy {
     public void crossOver(Individual a, Individual b) throws IOException { 
         //create deep copy of the first individual 
         Rectangle[] a_perm = new Rectangle[rectangles.length];
+        //a_perm = new Rectangle[rectangles.length];
         for (int k = 0; k < a_perm.length; k++) {
             a_perm[k] = a.getPermutation()[k].clone();
+            //ensure that a_perm has its placed fields false
+            if (a_perm[k].placed == true){
+                a_perm[k].placed = false;
+            }
         }
         //create deep copy of the second individual
         Rectangle[] b_perm = b.getPermutation();
+         //b_perm = b.getPermutation();
         for (int k = 0; k < b_perm.length; k++) {
             b_perm[k] = b.getPermutation()[k].clone();
+            //ensure that b_perm has its placed fields false
+            if (b_perm[k].placed == true){
+                b_perm[k].placed = false;
+            }
         }
         new_perm = new Rectangle[a_perm.length];
-        int p =  r.nextInt(rectangles.length );       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
-        int q =  r.nextInt(rectangles.length );
+         int p =  r.nextInt(rectangles.length );       //why 1 + length - 1 why not just   r.nextInt(rectangles.length) ? also it would then involve [1,length-1) when it should include [0,length-1]
+         int q =  r.nextInt(rectangles.length );
+         //ensures when setPlaced information needs to be copied from a_perm to b_perm it's executed on only one element , this covers the case of multiple rectangles with the same shape
+         int t = 0 ;
         for (int i = 0; i < q; i++) {
             new_perm[i] = a_perm[(p+i) % a_perm.length].clone();
             //mark as already placed in permutation
-            a_perm[(p+i) % a_perm.length].setPlaced(true);
+            //a_perm[(p+i) % a_perm.length].setPlaced(true);
+            t = 0;
             //copy this marking to the same number in the b_perm
             for(int j = 0 ; j < b_perm.length ; j++){
-                if(a_perm[(p+i) % a_perm.length].height == b_perm[j].height && a_perm[(p+i) % a_perm.length].width == b_perm[j].width && a_perm[(p+i) % a_perm.length].rotated == b_perm[j].rotated){
+                if(a_perm[(p+i) % a_perm.length].height == b_perm[j].height && a_perm[(p+i) % a_perm.length].width == b_perm[j].width && a_perm[(p+i) % a_perm.length].rotated == b_perm[j].rotated && t==0){
                     b_perm[j].setPlaced(true);
+                    t = 1;
                 }
             }
         }
@@ -190,9 +208,17 @@ public class GeneticAlgorithm extends PackingStrategy {
         while (i == j) {
             j = r.nextInt(rectangles.length);
         }
-        Rectangle aux = rectangles[i].clone();
-        rectangles[i] = rectangles[j].clone();
-        rectangles[j] = aux.clone();
+        try{       
+            Rectangle aux = rectangles[i].clone();
+            rectangles[i] = rectangles[j].clone();
+            rectangles[j] = aux.clone();
+        }catch(NullPointerException e){
+            System.out.println(i);
+        }
+        
+        
+
+        
     }
     
    /**
