@@ -9,7 +9,8 @@ public class BottomLeftSlide extends PackingStrategy{
     Rectangle[] rectangles;
     boolean sort;
 
-    BottomLeftSlide(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles, boolean sort) {
+    BottomLeftSlide(int containerHeight, boolean rotationsAllowed,
+            Rectangle[] rectangles, boolean sort) {
         this.containerHeight = containerHeight;
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
@@ -19,21 +20,26 @@ public class BottomLeftSlide extends PackingStrategy{
 
     @Override
     protected State pack() throws IOException, FileNotFoundException {
-        // TODO: sort rectangles descending order
+        // Sort the rectangles in descending order
         if(sort) {
             QuickSort instance = new QuickSort();
             rectangles = instance.sort(rectangles);
         }
 
-        State s = new State(rectangles.length);
+        State s = new State(rectangles.length); // State to be returned
 
-        int width = 0;
+        int width = 0;  // Initial width
 
         for(int i = 0; i < rectangles.length; i++) {
+            // Iterate through all the rectangles
             int sx = width;
+            // Starting x. It's equal to the width
             int sy = containerHeight - rectangles[i].height;
+            // The starting y is equal to the height of the container minus the
+            // the height of the rectangle
             boolean spin;
 
+            // Final width and final height of the container
             int finalWidth = Integer.MAX_VALUE;
             int finalHeight = Integer.MAX_VALUE;
 
@@ -42,26 +48,42 @@ public class BottomLeftSlide extends PackingStrategy{
                 int maxWidth = 0;
                 int maxHeight = 0;
 
-                // check to left
+                // Check to the left of the rectangle
                 for(int j = 0; j < i; j++) {
-                    if(doesHOverlap(sy, rectangles[i].height, rectangles[j]) && isLeft(sx, rectangles[j]) && isRightMost(maxWidth, rectangles[j])) {
+                    // Iterate through the rectangles that are already placed
+                    if(doesHOverlap(sy, rectangles[i].height, rectangles[j]) &&
+                            isLeft(sx, rectangles[j]) && 
+                            isRightMost(maxWidth, rectangles[j])) {
+                        // the current rectangle "vertically overlaps", 
+                        // is at left of sx and is the rightmost rectangle
                         if(!isWSame(sx, rectangles[j])) {
+                            // the current rectangle is not the same as the one
+                            // that caused a change in maxWidth before
                             maxWidth = rectangles[j].blx + rectangles[j].width;
                         } else {
                             maxWidth = sx;
                         }
                     }
                 }
+                
                 if(finalWidth != maxWidth) {
+                    // If the final width has changed, run the do loop again
                     spin = true;
                 }
                 finalWidth = maxWidth;
-                sx = maxWidth;
+                sx = maxWidth;  // Update the starting x
 
-                // check to bottom
+                // Check to the bottom of the rectangle
                 for(int j = 0; j < i; j++) {
-                    if(doesWOverlap(sx, rectangles[i].width, rectangles[j]) && isBottom(sy, rectangles[j]) && isTopMost(maxHeight, rectangles[j])) {
+                    // Iterate through the rectangles that are already placed
+                    if(doesWOverlap(sx, rectangles[i].width, rectangles[j]) &&
+                            isBottom(sy, rectangles[j]) && 
+                            isTopMost(maxHeight, rectangles[j])) {
+                        // the current rectangle "horizontally overlaps", 
+                        // is at bottom of sy and is the topmost rectangle
                         if(!isHSame(sy, rectangles[j])) {
+                            // the current rectangle is not the same as the one
+                            // that caused  a change in maxHeight before
                             maxHeight = rectangles[j].bly + rectangles[j].height;
                         } else {
                             maxHeight = sy;
@@ -69,17 +91,20 @@ public class BottomLeftSlide extends PackingStrategy{
                     }
                 }
                 if(finalHeight != maxHeight) {
+                    // If the final height has changed, run the do loop again
                     spin = true;
                 }
                 finalHeight = maxHeight;
-                sy = maxHeight;
+                sy = maxHeight; // Update the starting y
             } while(spin);
 
+            // Place the rectangle
             rectangles[i].setPosition(finalWidth, finalHeight);
 
+            // Add the rectangle to the state
             s.addRectangle(rectangles[i]);
 
-            // update the width of the frame
+            // Update the width of the frame
             if(sx + rectangles[i].width > width) {
                 width = sx + rectangles[i].width;
             }
@@ -88,26 +113,34 @@ public class BottomLeftSlide extends PackingStrategy{
         return s;
     }
 
+    // Returns true if Y is smaller than the top left coordinate of RECT
+    // and Y plus H is greater than the bottom left coordinate of RECT
     private boolean doesHOverlap(int y, int h, Rectangle rect) {
         return y < rect.bly + rect.height && y + h > rect.bly;
     }
 
+    // Returns true if X is smaller than the bottom right coordinate of RECT
+    // and X plus W is greater than the bottom left coordinate of RECT
     private boolean doesWOverlap(int x, int w, Rectangle rect) {
         return x < rect.blx + rect.width && x + w > rect.blx;
     }
 
+    // Return true if rect is at the left of x
     private boolean isLeft(int x, Rectangle rect) {
         return x >= rect.blx + rect.width;
     }
 
+    // Return true if rect is below y
     private boolean isBottom(int y, Rectangle rect) {
         return y >= rect.bly + rect.height;
     }
 
+    // Return true if rect is the right-most rectangle
     private boolean isRightMost(int maxWidth, Rectangle rect) {
         return rect.blx + rect.width > maxWidth;
     }
 
+    // Return true if rect is the top-most rectangle
     private boolean isTopMost(int maxHeight, Rectangle rect) {
         return rect.bly + rect.height > maxHeight;
     }
@@ -120,28 +153,4 @@ public class BottomLeftSlide extends PackingStrategy{
         return currentW == rect.blx + rect.width;
     }
 
-    // TODO: remove when done
-    public static void main(String[] args) throws IOException {
-        Rectangle[] rectangles = new Rectangle[8];
-        rectangles[0] = new Rectangle(3, 2);
-        rectangles[1] = new Rectangle(9, 4);
-        rectangles[2] = new Rectangle(11, 2);
-        rectangles[3] = new Rectangle(3, 1);
-        rectangles[4] = new Rectangle(5, 1);
-        rectangles[5] = new Rectangle(5, 4);
-        rectangles[6] = new Rectangle(7, 3);
-        rectangles[7] = new Rectangle(1, 1);
-
-
-        BottomLeftSlide bl = new BottomLeftSlide(6, false, rectangles, false);
-        State state = bl.pack();
-
-        Rectangle[] placement = state.getLayout();
-        for(Rectangle rectangle : placement) {
-            System.out.println(rectangle.blx + " " + rectangle.bly);
-        }
-
-        GUI drawing = new GUI(state);
-        drawing.run();
-    }
 }
