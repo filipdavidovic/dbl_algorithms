@@ -21,21 +21,21 @@ public class TestGenerator {
     private int containerHeight;
     private boolean rotationsAllowed;
     private int numberOfRectangles;
-    private boolean sort;
+    //private boolean sort;
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final int RANDOM_TEST_CASES = 1000;
+    final int RANDOM_TEST_CASES = 100;
     final int RANDOM_CONTAINER_HEIGHT = 201;
-    final int RANDOM_NR_RECTANGLES = 201;
+    final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
     final int RANDOM_HEIGHT = 201;
     //constraints on rectangles shape
     final boolean SQUARE_SHAPE = false;
     // set lower bound on rectangles size
-    final boolean BIG_SIZE = false;
+    final boolean BIG_SIZE = true;
     //make sure it is smaller than the max!!
-    final int minDimensionSize = 100;
+    final int minDimensionSize = 20;
 
     public TestGenerator() {
         this.rand = new Random();
@@ -53,9 +53,9 @@ public class TestGenerator {
         return numberOfRectangles;
     }
 
-    public boolean isSort() {
-        return sort;
-    }
+//    public boolean isSort() {
+//        return sort;
+//    }
 
 
     public void run() throws IOException, CloneNotSupportedException {
@@ -63,31 +63,35 @@ public class TestGenerator {
         String COMMA_DELIMITER = ", ";
         String NEW_LINE_SEPARATOR = "\n";
         String FILE_HEADER = "#input, Strategy, Shape Filter, Container Height, "
-                + "Rotations Allowed, Number of rectangles, Input sorted, "
+                + "Rotations Allowed, Number of rectangles, "
                 + "Fill rate";
-        FileWriter fileWriter = new FileWriter("inputs.csv");
+        int randomizeFileName = rand.nextInt(50);
+        FileWriter fileWriter = new FileWriter("inputs"+randomizeFileName+".csv");
         fileWriter.append(FILE_HEADER);
         for (int count = 1; count <= RANDOM_TEST_CASES; count++){
             //generate random container height: free or fixed aka 0 or 1
-            // if containerHeight  is 1 (fixed), then generate random height.
+            //if containerHeight  is 1 (fixed), then generate random height.
             listOfStrategies = new ArrayList<>();
+            //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
                 if (BIG_SIZE) {
                     containerHeight = minDimensionSize +
-                            rand.nextInt(RANDOM_CONTAINER_HEIGHT - minDimensionSize);
+                            rand.nextInt(RANDOM_CONTAINER_HEIGHT);
                 } else {
                     //should be at least 2
-                    containerHeight = 2 + rand.nextInt(RANDOM_CONTAINER_HEIGHT - 2);
+                    containerHeight = 2 + rand.nextInt(RANDOM_CONTAINER_HEIGHT);
                 }
             }
             //generate random boolean values for rotations
             rotationsAllowed = rand.nextBoolean();
             //generate random number of rectangles
             // set to be al least 5
-            numberOfRectangles = 5 + rand.nextInt(RANDOM_NR_RECTANGLES - 5);
+            int inputSize =  rand.nextInt(5);
+            numberOfRectangles = ARRAY_NR_RECTANGLES[inputSize];
+            numberOfRectangles = 5000;
             //create array of rectangles to store all of them
             Rectangle[] rectangles = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
@@ -97,11 +101,7 @@ public class TestGenerator {
                     // set max random dimenion size to container height
                     if (SQUARE_SHAPE){
                         int width = rand.nextInt(containerHeight);
-                        int height = rand.nextInt(containerHeight);
-                        rectangles[i] = new Rectangle(width, height);
-                    } else if (BIG_SIZE) {
-                        int width = minDimensionSize + rand.nextInt(containerHeight - minDimensionSize);
-                        int height = minDimensionSize + rand.nextInt(containerHeight- minDimensionSize);
+                        int height = width;
                         rectangles[i] = new Rectangle(width, height);
                     } else {
                         int width = rand.nextInt(containerHeight);
@@ -109,15 +109,15 @@ public class TestGenerator {
                         rectangles[i] = new Rectangle(width, height);
                     }
 
-                } else { // container height not fixed
+                } else { // container height not fixed, so equal to -1
                     // assign random values
                     if (SQUARE_SHAPE) {
                         int width = 1 + rand.nextInt(RANDOM_WIDTH - 1);
                         int height = width;
                         rectangles[i] = new Rectangle(width, height);
                     } else if (BIG_SIZE) {
-                        int width = minDimensionSize - rand.nextInt(RANDOM_WIDTH - minDimensionSize);
-                        int height = minDimensionSize - rand.nextInt(RANDOM_HEIGHT - minDimensionSize);
+                        int width = minDimensionSize + rand.nextInt(RANDOM_WIDTH);
+                        int height = minDimensionSize + rand.nextInt(RANDOM_HEIGHT);
                         rectangles[i] = new Rectangle(width, height);
                     } else {
                         int width = 1 + rand.nextInt(RANDOM_WIDTH - 1);
@@ -126,30 +126,50 @@ public class TestGenerator {
                     }
                 }
             }
-            //generate random boolean for 'sort' parameter -- check constructor of
-            // BottomLeft if in doubt.
-            sort = rand.nextBoolean();
-            //pass the generated input to all the strategies
-            //
+
             // note: i did not put all strategies in an arraylist and then loop through
             //them since they need to be instantiated with different parameters
             // so i could not generalise it without restructuring the constructors
             // of all strategies individually;
 
-            //add BottomLeft
-            PackingStrategy strategy_1 = new BottomLeft(this.getContainerHeight(),
-                    this.isRotationsAllowed(),  rectangles, this.isSort());
+            //add StripeNonFixed
+            PackingStrategy strategy_1 = new StripeNonFixed(this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_1);
+            
             //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
-           // listOfStrategies.add(strategy_2);
-            //add GeneticAlgorithm
-            PackingStrategy strategy_3 = new GeneticAlgorithm(this.getContainerHeight(),
-                    false, rectangles, 20, 2000, 0.4);
-            listOfStrategies.add(strategy_3);
+            listOfStrategies.add(strategy_2);
+            
+//            //add BruteForce
+//            PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
+//                    this.isRotationsAllowed(), rectangles);
+//            listOfStrategies.add(strategy_3);
+            
+            //add BinPacker
+            PackingStrategy strategy_4 = new BinPacker(this.getContainerHeight(),
+                    this.isRotationsAllowed(), rectangles);
+            listOfStrategies.add(strategy_4);
+            
+//            //add Simulated Annealing
+//            PackingStrategy strategy_5 = new SimulatedAnnealing(this.getContainerHeight(),
+//                    this.isRotationsAllowed(), rectangles);
+//            listOfStrategies.add(strategy_5);
+            
+            
+            
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
+                //make sure for stripe non fixed the height is really non-fixed
+                //and for default stripe the height is fixed
+                if (((strategy == strategy_1) && (this.getContainerHeight() != -1)) ||
+                     ((strategy == strategy_2) && (this.getContainerHeight() == -1))){
+                    continue;
+                } 
+                //make sure bruteforce does not receive big inputs
+//                if ((strategy == strategy_3) && (this.numberOfRectangles > 10)){
+//                    continue;
+//                }
                 State s = strategy.pack();
                 fileWriter.append(NEW_LINE_SEPARATOR);
                 fileWriter.append(String.valueOf(count));
@@ -159,7 +179,7 @@ public class TestGenerator {
                 if (SQUARE_SHAPE){
                     fileWriter.append("Squares");
                 } else if (BIG_SIZE) {
-                    fileWriter.append("Big rectangles");
+                    fileWriter.append("Big size");
                 } else {
                     fileWriter.append("None");
                 }
@@ -169,113 +189,40 @@ public class TestGenerator {
                 fileWriter.append(String.valueOf(this.isRotationsAllowed()));
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(this.getNumberOfRectangles()));
-                fileWriter.append(COMMA_DELIMITER);
-                if (strategy == strategy_1) {
-                    fileWriter.append(String.valueOf(this.isSort()));
-                } else {
-                    fileWriter.append('-');
-                }
+                
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(s.getFillRate()));
-                //fileWriter.append(COMMA_DELIMITER);
+                //to see the progress
+                System.out.println(count);
+                //fileWriter.append(COMMA_DELIMITER); //caused errors
 
                 //print same stuff -- for debugging
-                System.out.println("Input number: " + count);
-                System.out.println("Strategy: " + strategy.getClass().getSimpleName());
-                if (SQUARE_SHAPE){
-                    System.out.println("Shape filter: Squares");
-                } else if (BIG_SIZE) {
-                    System.out.println("Shape filter: Big rectangles");
-                } else {
-                    System.out.println("Shape filter: None");
-                }
-
-                System.out.println("Container height: " + this.getContainerHeight() );
-                System.out.println("Rotations allowed: " + this.isRotationsAllowed());
-                System.out.println("Number of rectangles:" + this.getNumberOfRectangles());
-                if (strategy == strategy_1) {
-                    System.out.println("Input sorted: " + this.isSort());
-                } else {
-                    System.out.println("Input sorted: -");
-                }
-                System.out.println("Fill rate: " + s.getFillRate());
-                System.out.println();
+//                System.out.println("Input number: " + count);
+//                System.out.println("Strategy: " + strategy.getClass().getSimpleName());
+//                if (SQUARE_SHAPE){
+//                    System.out.println("Shape filter: Squares");
+//                } else if (BIG_SIZE) {
+//                    System.out.println("Shape filter: Big rectangles");
+//                } else {
+//                    System.out.println("Shape filter: None");
+//                }
+//
+//                System.out.println("Container height: " + this.getContainerHeight() );
+//                System.out.println("Rotations allowed: " + this.isRotationsAllowed());
+//                System.out.println("Number of rectangles:" + this.getNumberOfRectangles());
+//                if (strategy == strategy_1) {
+//                    System.out.println("Input sorted: " + this.isSort());
+//                } else {
+//                    System.out.println("Input sorted: -");
+//                }
+//                System.out.println("Fill rate: " + s.getFillRate());
+//                System.out.println();
             }
         }
         fileWriter.flush();
         fileWriter.close();
 
     }
+    
 
-
-
-//    public void testMain() throws Exception {
-//
-//        String[] args = null;
-//
-//        int size =  25;
-//        boolean rotations = false;
-//        int fixed = 101;
-//
-//        String input = generateHeader(size, rotations, fixed);
-//        input =  generateInput(size, input);
-//        System.out.println(input);
-//        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-//        System.setIn(in);
-//        //PackingSolver.main(args);
-//
-//    }
-//
-//
-//    private String generateInput(int size, String headers){
-//
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append(headers);
-//        Random rand = new Random();
-//
-//        for (int i = 0; i < size; i++){
-//            stringBuilder.append(System.lineSeparator());
-//
-//            int height = rand.nextInt(100+1);
-//            stringBuilder.append(height);
-//
-//            stringBuilder.append(" ");
-//
-//            int width = rand.nextInt(100+1);
-//            stringBuilder.append(width);
-//        }
-//
-//        String finalString = stringBuilder.toString();
-//        return finalString;
-//    }
-//
-//    private String generateHeader(int size, boolean rotations, int fixed){
-//        StringBuilder stringBuilder = new StringBuilder();
-//
-//        //write container height
-//        //if fixed == -1 -> free
-//        stringBuilder.append("container height: ");
-//        if (fixed == -1){
-//            stringBuilder.append("free");
-//        } else {
-//            stringBuilder.append("fixed "+fixed);
-//        }
-//        stringBuilder.append(System.lineSeparator());
-//
-//        //write rotations
-//        stringBuilder.append("rotations allowed: ");
-//        if (rotations){
-//            stringBuilder.append("yes");
-//        } else {
-//            stringBuilder.append("no");
-//        }
-//        stringBuilder.append(System.lineSeparator());
-//
-//        //write number of rectangles
-//        stringBuilder.append("number of rectangles: "+size);
-//
-//
-//        String finalString = stringBuilder.toString();
-//        return finalString;
-//    }
 }
