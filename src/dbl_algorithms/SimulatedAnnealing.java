@@ -80,7 +80,7 @@ public class SimulatedAnnealing extends PackingStrategy{
     private void mutate() throws IOException, CloneNotSupportedException {
         int currentWidth = current.getLayoutWidth();
 
-        if((!rotationsAllowed || rand.nextBoolean()) && rotatable.size() == 0) {
+        if(!(rotationsAllowed && rotatable.size() > 0 && rand.nextBoolean())) {
             int i = rand.nextInt(rectangles.length - 1);
             int j = rand.nextInt(rectangles.length - 1);
             while(i == j) {
