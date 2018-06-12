@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Random;
 /**
  *
- * @author dianaepureanu
  */
 public class TestGenerator {
+    private GUI drawing;
     private int containerHeight;
     private boolean rotationsAllowed;
     private int numberOfRectangles;
@@ -25,7 +25,7 @@ public class TestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final int RANDOM_TEST_CASES = 100;
+    final int RANDOM_TEST_CASES = 1;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
@@ -53,11 +53,6 @@ public class TestGenerator {
         return numberOfRectangles;
     }
 
-//    public boolean isSort() {
-//        return sort;
-//    }
-
-
     public void run() throws IOException, CloneNotSupportedException {
 
         String COMMA_DELIMITER = ", ";
@@ -74,6 +69,7 @@ public class TestGenerator {
             listOfStrategies = new ArrayList<>();
             //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
+            //containerHeight = 1; //HARDCODED FOR TESTING
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -87,11 +83,12 @@ public class TestGenerator {
             }
             //generate random boolean values for rotations
             rotationsAllowed = rand.nextBoolean();
+            //rotationsAllowed = false; //HARDCODED FOR TESTING
             //generate random number of rectangles
             // set to be al least 5
             int inputSize =  rand.nextInt(5);
             numberOfRectangles = ARRAY_NR_RECTANGLES[inputSize];
-            numberOfRectangles = 5000;
+            numberOfRectangles = 25; //HARDCODED FOR TESTING
             //create array of rectangles to store all of them
             Rectangle[] rectangles = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
@@ -127,27 +124,23 @@ public class TestGenerator {
                 }
             }
 
-            // note: i did not put all strategies in an arraylist and then loop through
-            //them since they need to be instantiated with different parameters
-            // so i could not generalise it without restructuring the constructors
-            // of all strategies individually;
 
             //add StripeNonFixed
             PackingStrategy strategy_1 = new StripeNonFixed(this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_1);
-            
-            //add DefaultStripe
+//            
+//            //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_2);
-            
+//            
 //            //add BruteForce
-//            PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
-//                    this.isRotationsAllowed(), rectangles);
-//            listOfStrategies.add(strategy_3);
+            PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
+                    this.isRotationsAllowed(), rectangles);
+            listOfStrategies.add(strategy_3);
             
             //add BinPacker
-            PackingStrategy strategy_4 = new BinPacker(this.getContainerHeight(),
+            PackingStrategy strategy_4 = new BinPackerHeightPicker(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_4);
             
@@ -156,6 +149,10 @@ public class TestGenerator {
 //                    this.isRotationsAllowed(), rectangles);
 //            listOfStrategies.add(strategy_5);
             
+               //add GeneticAlgorithm
+//            PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
+//                    true, rectangles, 20, 2000, 0.4);
+//            listOfStrategies.add(strategy_6);
             
             
             //write csv file
@@ -167,10 +164,14 @@ public class TestGenerator {
                     continue;
                 } 
                 //make sure bruteforce does not receive big inputs
-//                if ((strategy == strategy_3) && (this.numberOfRectangles > 10)){
-//                    continue;
-//                }
+                if ((strategy == strategy_3) && ((this.numberOfRectangles > 5))) {
+                    continue;
+                }
+
+                
                 State s = strategy.pack();
+                drawing = new GUI(s);
+                drawing.run();
                 fileWriter.append(NEW_LINE_SEPARATOR);
                 fileWriter.append(String.valueOf(count));
                 fileWriter.append(COMMA_DELIMITER);
@@ -194,7 +195,7 @@ public class TestGenerator {
                 fileWriter.append(String.valueOf(s.getFillRate()));
                 //to see the progress
                 System.out.println(count);
-                //fileWriter.append(COMMA_DELIMITER); //caused errors
+                System.out.println(strategy.getClass());
 
                 //print same stuff -- for debugging
 //                System.out.println("Input number: " + count);
@@ -217,6 +218,7 @@ public class TestGenerator {
 //                }
 //                System.out.println("Fill rate: " + s.getFillRate());
 //                System.out.println();
+
             }
         }
         fileWriter.flush();
