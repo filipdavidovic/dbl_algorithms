@@ -34,7 +34,7 @@ public class BruteForce extends PackingStrategy {
 
                 if(rotationsAllowed) {
                     // get rotation permutations for the current rectangle permutation
-                    AbstractPermutation rotationPermutation = new RotationPermutation(permutation);
+                    AbstractPermutation rotationPermutation = new RotationPermutation(permutation, containerHeight);
                     List<Rectangle[]> rotationPermutations = rotationPermutation.permute(true);
                     // try each of them out
                     for(Rectangle[] c : rotationPermutations) {

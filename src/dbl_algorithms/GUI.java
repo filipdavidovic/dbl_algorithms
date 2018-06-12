@@ -32,11 +32,11 @@ public class GUI {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setVisible(true);
         window.add(new DrawGrid(state, adjustRatio, displayPackage));
-        String fillRate = String.valueOf(state.fillRate);
-        String innerArea = String.valueOf(state.innerArea);
+        String fillRate = String.valueOf(state.getFillRate());
+        String innerArea = String.valueOf(state.getInnerArea());
         String outerArea = String.valueOf(state.getArea());
-        String width = String.valueOf(state.layoutWidth);
-        String height = String.valueOf(state.layoutHeight);
+        String width = String.valueOf(state.getLayoutWidth());
+        String height = String.valueOf(state.getLayoutHeight());
         
         System.out.println("Fill rate: "+fillRate);
         System.out.println("Inner Area: "+innerArea);

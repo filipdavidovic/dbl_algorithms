@@ -7,10 +7,12 @@ public class RotationPermutation implements AbstractPermutation {
 
     List<Rectangle[]> permutations;
     Rectangle[] rectangles;
+    int containerHeight;
 
-    RotationPermutation(Rectangle[] rectangles) {
+    RotationPermutation(Rectangle[] rectangles, int containerHeight) {
         this.rectangles = rectangles;
         this.permutations = new ArrayList<>();
+        this.containerHeight = containerHeight;
     }
 
     @Override
@@ -26,16 +28,20 @@ public class RotationPermutation implements AbstractPermutation {
             Rectangle[] clone1 = getClone(permutation);
             permutations.add(clone1);
             // add rotated right child
-            Rectangle[] clone2 = getClone(permutation);
-            clone2[n].rotate();
-            permutations.add(clone2);
+            if(permutation[n].width <= containerHeight) {
+                Rectangle[] clone2 = getClone(permutation);
+                clone2[n].rotate();
+                permutations.add(clone2);
+            }
         } else {
             // create left child
             Rectangle[] clone1 = getClone(permutation);
             rotationPermutation(clone1, n - 1);
             // create rotated right child
             Rectangle[] clone2 = getClone(permutation);
-            clone2[n].rotate();
+            if(permutation[n].width <= containerHeight) {
+                clone2[n].rotate();
+            }
             rotationPermutation(clone2, n - 1);
         }
     }

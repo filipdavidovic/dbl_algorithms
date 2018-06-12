@@ -19,7 +19,7 @@ public class State {
     int layoutHeight;
     int prevWidth;
     int prevHeight;
-    int innerArea; //Sum of areas of rectangles that were placed already
+    private int innerArea; //Sum of areas of rectangles that were placed already
     float fillRate;
     int rectNumber;
 
@@ -58,7 +58,7 @@ public class State {
             System.out.println("Layout size exceeded!");
         }
         //update inner area and fillRate
-        innerArea = innerArea + (r.height * r.width);
+        setInnerArea(getInnerArea() + (r.height * r.width));
 
         //update height and width of the state
         if (layoutWidth < r.blx + r.width) {
@@ -70,26 +70,36 @@ public class State {
             layoutHeight = r.bly + r.height;
         }
 
-        fillRate = (float) innerArea / (float) this.getArea();
+        fillRate = (float) getInnerArea() / (float) this.getArea();
 
     }
 
     public void removeRectangle() {
         rectNumber--;
 
-        innerArea -= layout[index - 1].width * layout[index - 1].height;
+        setInnerArea(getInnerArea() - layout[index - 1].width * layout[index - 1].height);
 
-        if (this.layoutWidth == layout[index - 1].blx + layout[index - 1].width) {
+        boolean topMost = true, rightMost = true;
+        
+        for(int i = 0; i < index - 1; i++) {
+            if (this.layoutWidth == layout[i].blx + layout[i].width) {
+                rightMost = false;
+            }
+            if (this.layoutHeight == layout[i].bly + layout[i].height) {
+                rightMost = false;
+            }
+        }
+        if (this.layoutWidth == layout[index - 1].blx + layout[index - 1].width && rightMost) {
             this.layoutWidth = this.prevWidth;
         }
-        if (this.layoutHeight == layout[index - 1].bly + layout[index - 1].height) {
+        if (this.layoutHeight == layout[index - 1].bly + layout[index - 1].height && topMost) {
             this.layoutHeight = this.prevHeight;
         }
 
         layout[index - 1] = null;
         index--;
 
-        fillRate = (float) innerArea / (float) this.getArea();
+        fillRate = (float) getInnerArea() / (float) this.getArea();
     }
 
     public int getArea() {
@@ -143,8 +153,10 @@ public class State {
         State clone = new State(this.layout.length);
 
         clone.setLayout(getLayoutClone());
-        clone.setFillRate(fillRate);
+        clone.setFillRate(this.fillRate);
         clone.setIndex(this.index);
+        clone.setInnerArea(this.innerArea);
+        
         clone.setLayoutHeight(this.layoutHeight);
         clone.setLayoutWidth(this.layoutWidth);
 
@@ -157,6 +169,20 @@ public class State {
             temp[rectangle.getInitialposition()] = rectangle;
         }
         setLayout(temp);
+    }
+
+    /**
+     * @return the innerArea
+     */
+    public int getInnerArea() {
+        return innerArea;
+    }
+
+    /**
+     * @param innerArea the innerArea to set
+     */
+    public void setInnerArea(int innerArea) {
+        this.innerArea = innerArea;
     }
 
 }
