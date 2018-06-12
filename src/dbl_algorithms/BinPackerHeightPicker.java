@@ -40,7 +40,7 @@ public class BinPackerHeightPicker extends PackingStrategy {
         double maxQuality = 0;
         State s = null;
 
-        if (rectangles.length!=0) {
+        if (containerHeight==-1) {
             for (int i = Math.max(height - 200,maxHeight); i <= height + 200; i++) {
                 strategy = new BinPacker(i, rotationsAllowed, rectangles);
                 State sIntermediate = strategy.pack();
@@ -56,15 +56,17 @@ public class BinPackerHeightPicker extends PackingStrategy {
                     }
                 }
             }
-        } else {
-            for (int i = 0; i <= height + (int) height / 2; i++) {
+        } else { 
+            int minWidth = Integer.MAX_VALUE;
+            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
                 strategy = new BinPacker(i, rotationsAllowed, rectangles);
                 State sIntermediate = strategy.pack();
-                if (sIntermediate.fillRate > maxQuality) {
-                    maxQuality = sIntermediate.fillRate;
+                if (sIntermediate.layoutWidth < minWidth) {
+                    minWidth = sIntermediate.layoutWidth;
                     s = sIntermediate;
                 }
             }
+                
         }
 
         return s;
