@@ -251,7 +251,7 @@ public class GeneticAlgorithm extends PackingStrategy {
         try{       
             Rectangle aux = rectangles[i];                                          //removed clone
             rectangles[i] = rectangles[j];
-            rectangles[j] = aux.clone();
+            rectangles[j] = aux;
         }catch(NullPointerException e){
             System.out.println(i);
         }
@@ -267,7 +267,7 @@ public class GeneticAlgorithm extends PackingStrategy {
     public void mutation(Rectangle[] rectangles) {
         if (rotationsAllowed == true) {
             for (int i = 0; i < rectangles.length; i++) {
-                if (Math.random() < p_m) {
+                if (Math.random() < p_m && rectangles[i].width <= containerHeight) {
                     rectangles[i].rotate();
                 }
             }
