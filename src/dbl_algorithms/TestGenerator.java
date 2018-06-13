@@ -126,7 +126,7 @@ public class TestGenerator {
 
 
             //add StripeNonFixed
-            PackingStrategy strategy_1 = new StripeNonFixed(this.isRotationsAllowed(), rectangles);
+            PackingStrategy strategy_1 = new StripeNonFixed(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_1);
 //            
 //            //add DefaultStripe
