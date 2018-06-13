@@ -199,6 +199,9 @@ public class PackingSolver {
 
             State s = strategy.pack();
             s.reorder();
+            if (containerHeight != -1) {
+                s.setContainerHeight(containerHeight);
+            }
             printOutput(s.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(s);
