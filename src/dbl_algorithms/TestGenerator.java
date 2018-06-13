@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 /**
- *
+ * @author dianaepureanu
  */
 public class TestGenerator {
     private GUI drawing;
@@ -25,7 +25,8 @@ public class TestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final int RANDOM_TEST_CASES = 1;
+    final boolean TEST_OVERLAP = true;
+    final int RANDOM_TEST_CASES = 100;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
@@ -69,7 +70,8 @@ public class TestGenerator {
             listOfStrategies = new ArrayList<>();
             //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
-            //containerHeight = 1; //HARDCODED FOR TESTING
+ //////////////////////////////////////////////////////////////////////////////           
+            containerHeight = 1; //HARDCODED FOR TESTING 
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -83,16 +85,19 @@ public class TestGenerator {
             }
             //generate random boolean values for rotations
             rotationsAllowed = rand.nextBoolean();
+  //////////////////////////////////////////////////////////////////////////////      
             //rotationsAllowed = false; //HARDCODED FOR TESTING
             //generate random number of rectangles
             // set to be al least 5
             int inputSize =  rand.nextInt(5);
             numberOfRectangles = ARRAY_NR_RECTANGLES[inputSize];
-            numberOfRectangles = 25; //HARDCODED FOR TESTING
+ //////////////////////////////////////////////////////////////////////////////      
+            numberOfRectangles = 5; //HARDCODED FOR TESTING
             //create array of rectangles to store all of them
-            Rectangle[] rectangles = new Rectangle [numberOfRectangles];
+            Rectangle[] rectangles  = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
             for (int i = 0; i < numberOfRectangles; i++) {
+           // rectangles = new Rectangle [numberOfRectangles];
                 if (containerHeight != -1) {
                     // container height is fixed
                     // set max random dimenion size to container height
@@ -100,10 +105,12 @@ public class TestGenerator {
                         int width = rand.nextInt(containerHeight);
                         int height = width;
                         rectangles[i] = new Rectangle(width, height);
+                        rectangles[i].setInitialposition(i);
                     } else {
-                        int width = rand.nextInt(containerHeight);
-                        int height = rand.nextInt(containerHeight);
+                        int width = rand.nextInt(containerHeight-1)+1;
+                        int height = rand.nextInt(containerHeight-1)+1;
                         rectangles[i] = new Rectangle(width, height);
+                        rectangles[i].setInitialposition(i);
                     }
 
                 } else { // container height not fixed, so equal to -1
@@ -116,10 +123,13 @@ public class TestGenerator {
                         int width = minDimensionSize + rand.nextInt(RANDOM_WIDTH);
                         int height = minDimensionSize + rand.nextInt(RANDOM_HEIGHT);
                         rectangles[i] = new Rectangle(width, height);
+                        rectangles[i].setInitialposition(i);
+                        
                     } else {
                         int width = 1 + rand.nextInt(RANDOM_WIDTH - 1);
                         int height = 1 + rand.nextInt(RANDOM_HEIGHT - 1);
                         rectangles[i] = new Rectangle(width, height);
+                        rectangles[i].setInitialposition(i);
                     }
                 }
             }
@@ -144,15 +154,15 @@ public class TestGenerator {
                     this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_4);
             
-//            //add Simulated Annealing
-//            PackingStrategy strategy_5 = new SimulatedAnnealing(this.getContainerHeight(),
-//                    this.isRotationsAllowed(), rectangles);
+            //add Simulated Annealing
+//            PackingStrategy strategy_5 = new SimulatedAnnealing(containerHeight,
+//                    rotationsAllowed, rectangles);
 //            listOfStrategies.add(strategy_5);
             
                //add GeneticAlgorithm
-//            PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
-//                    true, rectangles, 20, 2000, 0.4);
-//            listOfStrategies.add(strategy_6);
+            PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
+                    true, rectangles, 20, 2000, 0.4);
+            listOfStrategies.add(strategy_6);
             
             
             //write csv file
@@ -167,11 +177,52 @@ public class TestGenerator {
                 if ((strategy == strategy_3) && ((this.numberOfRectangles > 5))) {
                     continue;
                 }
+                //make sure GA does not receive free height
+                if ((strategy == strategy_6) && ((this.getContainerHeight() == -1))) {
+                    continue;
+                }
 
                 
+                
                 State s = strategy.pack();
-                drawing = new GUI(s);
-                drawing.run();
+
+
+                if (TEST_OVERLAP){
+                    if (checkErrors(s)){ 
+                        drawing = new GUI(s);
+                        drawing.run();
+                       //print same stuff -- for debugging
+
+                        System.out.println("What was wrong:");
+
+                        for (Rectangle r: rectangles){
+                        System.out.print(String.valueOf(r.width+" "));
+                        System.out.println(String.valueOf(r.height));
+                        }
+                        s = strategy.pack();
+
+                        System.out.println("Input number: " + count);
+                        System.out.println("Strategy: " + strategy.getClass().getSimpleName());
+                        if (SQUARE_SHAPE){
+                            System.out.println("Shape filter: Squares");
+                        } else if (BIG_SIZE) {
+                            System.out.println("Shape filter: Big rectangles");
+                        } else {
+                            System.out.println("Shape filter: None");
+                        }
+
+
+                        System.out.println("Container height: " + this.getContainerHeight() );
+                        System.out.println("Rotations allowed: " + this.isRotationsAllowed());
+                        System.out.println("Number of rectangles:" + this.getNumberOfRectangles());
+
+                        System.out.println("Fill rate: " + s.getFillRate());
+                        System.out.println("________________");
+                        System.out.println();
+
+                    }
+                }
+                
                 fileWriter.append(NEW_LINE_SEPARATOR);
                 fileWriter.append(String.valueOf(count));
                 fileWriter.append(COMMA_DELIMITER);
@@ -195,35 +246,48 @@ public class TestGenerator {
                 fileWriter.append(String.valueOf(s.getFillRate()));
                 //to see the progress
                 System.out.println(count);
-                System.out.println(strategy.getClass());
+//                System.out.println(strategy.getClass());
 
-                //print same stuff -- for debugging
-//                System.out.println("Input number: " + count);
-//                System.out.println("Strategy: " + strategy.getClass().getSimpleName());
-//                if (SQUARE_SHAPE){
-//                    System.out.println("Shape filter: Squares");
-//                } else if (BIG_SIZE) {
-//                    System.out.println("Shape filter: Big rectangles");
-//                } else {
-//                    System.out.println("Shape filter: None");
-//                }
-//
-//                System.out.println("Container height: " + this.getContainerHeight() );
-//                System.out.println("Rotations allowed: " + this.isRotationsAllowed());
-//                System.out.println("Number of rectangles:" + this.getNumberOfRectangles());
-//                if (strategy == strategy_1) {
-//                    System.out.println("Input sorted: " + this.isSort());
-//                } else {
-//                    System.out.println("Input sorted: -");
-//                }
-//                System.out.println("Fill rate: " + s.getFillRate());
-//                System.out.println();
+
 
             }
         }
         fileWriter.flush();
         fileWriter.close();
 
+    }
+    
+    
+    boolean checkErrors(State s){ //if true then the state has overlap
+
+        Rectangle[] test = s.getLayout();
+        for (int i = 0; i < test.length; i++) {
+            Rectangle current = test[i];
+            for (int j = 0; j < test.length; j++) {
+                 if (i != j){
+                    boolean bottomLeftOverlapY = ((test[i].bly<(test[j].bly)) && (test[i].bly + test[i].height >test[j].bly));
+                    boolean bottomLeftOverlapX = ((test[i].blx<(test[j].blx)) && (test[i].blx + test[i].width >test[j].blx));
+
+                    boolean bottomRightOverlapY = ((test[i].bly<(test[j].bly)) && (test[i].bly + test[i].height >test[j].bly));
+                    boolean bottomRightOverlapX = ((test[i].blx<(test[j].blx + test[j].width)) && (test[i].blx + test[i].width >test[j].blx +test[j].width));
+
+                    boolean topLeftOverlapY = ((test[i].bly<(test[j].bly + test[j].height)) && (test[i].bly + test[i].height >test[j].bly+test[j].height));
+                    boolean topLeftOverlapX = ((test[i].blx<(test[j].blx)) && (test[i].blx + test[i].width >test[j].blx));
+
+                    boolean topRightOverlapY = ((test[i].bly<(test[j].bly + test[j].height)) && (test[i].bly + test[i].height >test[j].bly+test[j].height));
+                    boolean topRightOverlapX = ((test[i].blx<(test[j].blx + test[j].width)) && (test[i].blx + test[i].width >test[j].blx +test[j].width));
+
+                    if ((bottomLeftOverlapY && bottomLeftOverlapX) ||
+                            (bottomRightOverlapY && bottomRightOverlapX) ||
+                            (topLeftOverlapY && topLeftOverlapX) ||
+                            (topRightOverlapY && topRightOverlapX)) {
+
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     
 
