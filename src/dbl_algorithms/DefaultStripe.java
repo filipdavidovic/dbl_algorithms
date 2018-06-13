@@ -22,7 +22,7 @@ public class DefaultStripe extends PackingStrategy {
     int containerHeight;
     boolean rotationsAllowed;
     Rectangle[] rectangles;
-    int llx = 0;  //lower left x coordinate 
+    int llx;  //lower left x coordinate 
 
     /**
      * DefaultStripe constructor
@@ -43,7 +43,7 @@ public class DefaultStripe extends PackingStrategy {
         if (containerHeight == -1) {
             throw new UnsupportedOperationException("not fixed height");
         }
-
+        llx = 0;
         //if rotations are allowed, rotate each rectangle s.t. 
         //the biggest dimension is parallel to the 'x axis'(width)
         if (rotationsAllowed) {
