@@ -88,7 +88,7 @@ public class PackingSolver {
             case 10:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
                     float fillRate2 = s2.pack().fillRate;
                     if (fillRate1 > fillRate2) {
@@ -99,7 +99,7 @@ public class PackingSolver {
                     break;
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
                     s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
                     s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
@@ -120,7 +120,7 @@ public class PackingSolver {
             case 25:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
                     float fillRate2 = s2.pack().fillRate;
                     if (fillRate1 > fillRate2) {
@@ -131,7 +131,7 @@ public class PackingSolver {
                     break;
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
                     s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
                     s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
@@ -152,7 +152,7 @@ public class PackingSolver {
             case 5000:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
                     float fillRate2 = s2.pack().fillRate;
                     if (fillRate1 > fillRate2) {
@@ -175,7 +175,7 @@ public class PackingSolver {
             case 10000:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new StripeNonFixed(rotationsAllowed, rectangles);
+                    s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
                     float fillRate1 = s1.pack().fillRate;
                     float fillRate2 = s2.pack().fillRate;
                     if (fillRate1 > fillRate2) {
