@@ -184,5 +184,13 @@ public class State {
     public void setInnerArea(int innerArea) {
         this.innerArea = innerArea;
     }
+    
+    /**
+     * @param containerHeight fixed height of the container
+     */
+    public void setContainerHeight(int containerHeight) {
+        setLayoutHeight(containerHeight);
+        fillRate = (float) getInnerArea() / (float) this.getArea();
+    }
 
 }
