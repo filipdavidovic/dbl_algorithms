@@ -202,9 +202,6 @@ public class PackingSolver {
             }
 
             state.reorder();
-            if (containerHeight != -1) {
-                state.setContainerHeight(containerHeight);
-            }
             printOutput(state.getLayout(), containerHeight, rotationsAllowed);
 
             drawing = new GUI(state);

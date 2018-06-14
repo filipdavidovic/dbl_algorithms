@@ -16,12 +16,14 @@ public class State {
     private Rectangle[] layout;
     int index;
     int layoutWidth;
-    int layoutHeight;
+    int layoutHeight;  //height of bounding rectangle
+    int containerHeight; //height of container
     int prevWidth;
     int prevHeight;
     private int innerArea; //Sum of areas of rectangles that were placed already
     float fillRate;
     int rectNumber;
+    boolean fixedHeight;
 
     State(int size) {
         layout = new Rectangle[size];
@@ -31,6 +33,12 @@ public class State {
         rectNumber = 0;
         layoutWidth = 0;
         layoutHeight = 0;
+        fixedHeight = false;
+    }
+
+    public void setFixedHeight(int containerHeight) {
+        fixedHeight = true;
+        this.containerHeight = containerHeight;
     }
 
     public void setFillRate(float fillRate) {
@@ -80,8 +88,8 @@ public class State {
         setInnerArea(getInnerArea() - layout[index - 1].width * layout[index - 1].height);
 
         boolean topMost = true, rightMost = true;
-        
-        for(int i = 0; i < index - 1; i++) {
+
+        for (int i = 0; i < index - 1; i++) {
             if (this.layoutWidth == layout[i].blx + layout[i].width) {
                 rightMost = false;
             }
@@ -92,6 +100,7 @@ public class State {
         if (this.layoutWidth == layout[index - 1].blx + layout[index - 1].width && rightMost) {
             this.layoutWidth = this.prevWidth;
         }
+
         if (this.layoutHeight == layout[index - 1].bly + layout[index - 1].height && topMost) {
             this.layoutHeight = this.prevHeight;
         }
@@ -103,6 +112,9 @@ public class State {
     }
 
     public int getArea() {
+        if (fixedHeight) {
+            return this.containerHeight * this.layoutWidth;
+        }
         return this.layoutHeight * this.layoutWidth;
     }
 
@@ -156,7 +168,7 @@ public class State {
         clone.setFillRate(this.fillRate);
         clone.setIndex(this.index);
         clone.setInnerArea(this.innerArea);
-        
+
         clone.setLayoutHeight(this.layoutHeight);
         clone.setLayoutWidth(this.layoutWidth);
 
@@ -183,14 +195,6 @@ public class State {
      */
     public void setInnerArea(int innerArea) {
         this.innerArea = innerArea;
-    }
-    
-    /**
-     * @param containerHeight fixed height of the container
-     */
-    public void setContainerHeight(int containerHeight) {
-        setLayoutHeight(containerHeight);
-        fillRate = (float) getInnerArea() / (float) this.getArea();
     }
 
 }

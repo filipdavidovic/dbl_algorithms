@@ -60,6 +60,7 @@ public class DefaultStripe extends PackingStrategy {
 
         // initiate the state and the list of stripes
         State state = new State(rectangles.length);
+        state.setFixedHeight(containerHeight);
         List<Stripe> list = new LinkedList<>();
 
         //get smallest width and smallest height (note dimensions may not belong to same rectangle)
