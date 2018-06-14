@@ -30,7 +30,7 @@ public class StripeNonFixed extends PackingStrategy {
             PackingStrategy strategy = new DefaultStripe(i, rotationsAllowed, rectangles); 
             State newState = strategy.pack();
             //check if newState is better
-            if (newState.layoutWidth < bestState.layoutWidth) {
+            if (newState.fillRate > bestState.fillRate) {
                 bestState = newState;
             }
         }
