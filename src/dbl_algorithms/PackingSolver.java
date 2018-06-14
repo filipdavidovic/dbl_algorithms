@@ -155,10 +155,9 @@ public class PackingSolver {
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    
                     st1 = s1.pack();
                     st2 = s2.pack();
-                    if (st1.layoutWidth < st2.layoutWidth) {
+                    if (st1.fillRate > st2.fillRate) {
                         state = st1;
                     } else {
                         state = st2;
@@ -182,7 +181,7 @@ public class PackingSolver {
                     
                     st1 = s1.pack();
                     st2 = s2.pack();
-                    if (st1.layoutWidth < st2.layoutWidth) {
+                    if (st1.fillRate > st2.fillRate) {
                         state = st1;
                     } else {
                         state = st2;
@@ -197,6 +196,7 @@ public class PackingSolver {
                     } else {
                         state = st2;
                     }
+                    
                 }
                 break;
             }
