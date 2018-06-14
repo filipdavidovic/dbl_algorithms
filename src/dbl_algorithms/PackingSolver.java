@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
  */
 public class PackingSolver {
 
-    PackingStrategy strategy;
     private GUI drawing;
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -74,27 +73,30 @@ public class PackingSolver {
                     minHeight = height;
                 }
             }
-
+            State state = null;
             PackingStrategy s1, s2, s3, s4;
-            // TODO: make the selection for the proper algorithm
+            State st1,st2,st3,st4;
+            
             switch (numberOfRectangles) {
 
             case 3:
-                strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                s1 = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                state = s1.pack();
                 break;
             case 5:
-                strategy = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                s1 = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                state = s1.pack();
                 break;
             case 10:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.fillRate > st2.fillRate) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                     break;
                 } else {
@@ -102,18 +104,18 @@ public class PackingSolver {
                     s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
                     s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
                     s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    float fillRate3 = s3.pack().fillRate;
-                    float fillRate4 = s4.pack().fillRate;
-                    if (fillRate1 > fillRate2 && fillRate1 > fillRate3 && fillRate1 > fillRate4) {
-                        strategy = s1;
-                    } else if (fillRate2 > fillRate3 && fillRate2 > fillRate4) {
-                        strategy = s2;
-                    } else if (fillRate3 > fillRate4) {
-                        strategy = s3;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    st3 = s3.pack();
+                    st4 = s4.pack();
+                    if (st1.layoutWidth < st2.layoutWidth && st1.layoutWidth < st3.layoutWidth && st1.layoutWidth < st4.layoutWidth) {
+                        state = st1;
+                    } else if (st2.layoutWidth < st3.layoutWidth && st2.layoutWidth < st4.layoutWidth) {
+                        state = st2;
+                    } else if (st3.layoutWidth < st4.layoutWidth) {
+                        state = st3;
                     } else {
-                        strategy = s4;
+                        state = st4;
                     }
                     break;
                 }
@@ -121,12 +123,12 @@ public class PackingSolver {
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.fillRate > st2.fillRate) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                     break;
                 } else {
@@ -134,18 +136,18 @@ public class PackingSolver {
                     s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
                     s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
                     s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    float fillRate3 = s3.pack().fillRate;
-                    float fillRate4 = s4.pack().fillRate;
-                    if (fillRate1 > fillRate2 && fillRate1 > fillRate3 && fillRate1 > fillRate4) {
-                        strategy = s1;
-                    } else if (fillRate2 > fillRate3 && fillRate2 > fillRate4) {
-                        strategy = s2;
-                    } else if (fillRate3 > fillRate4) {
-                        strategy = s3;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    st3 = s3.pack();
+                    st4 = s4.pack();
+                    if (st1.layoutWidth < st2.layoutWidth && st1.layoutWidth < st3.layoutWidth && st1.layoutWidth < st4.layoutWidth) {
+                        state = st1;
+                    } else if (st2.layoutWidth < st3.layoutWidth && st2.layoutWidth < st4.layoutWidth) {
+                        state = st2;
+                    } else if (st3.layoutWidth < st4.layoutWidth) {
+                        state = st3;
                     } else {
-                        strategy = s4;
+                        state = st4;
                     }
                     break;
                 }
@@ -153,22 +155,23 @@ public class PackingSolver {
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.layoutWidth < st2.layoutWidth) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.layoutWidth < st2.layoutWidth) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                 }
                 break;
@@ -176,35 +179,35 @@ public class PackingSolver {
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.layoutWidth < st2.layoutWidth) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
-                    float fillRate1 = s1.pack().fillRate;
-                    float fillRate2 = s2.pack().fillRate;
-                    if (fillRate1 > fillRate2) {
-                        strategy = s1;
+                    st1 = s1.pack();
+                    st2 = s2.pack();
+                    if (st1.layoutWidth < st2.layoutWidth) {
+                        state = st1;
                     } else {
-                        strategy = s2;
+                        state = st2;
                     }
                 }
                 break;
             }
 
-            State s = strategy.pack();
-            s.reorder();
+            state.reorder();
             if (containerHeight != -1) {
-                s.setContainerHeight(containerHeight);
+                state.setContainerHeight(containerHeight);
             }
-            printOutput(s.getLayout(), containerHeight, rotationsAllowed);
+            printOutput(state.getLayout(), containerHeight, rotationsAllowed);
 
-            drawing = new GUI(s);
+            drawing = new GUI(state);
             drawing.run();
 
         } catch (IOException e) {
