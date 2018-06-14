@@ -41,7 +41,7 @@ public class BinPacker extends PackingStrategy {
        
         rectangles = instance.sort(rectangles);
        
-        State state = new State(rectangles.length);//gonna be the result
+        State state = new State(rectangles.length, containerHeight);//gonna be the result
 
         Packer packer;
        

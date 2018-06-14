@@ -36,7 +36,7 @@ public class DefaultStrategy extends PackingStrategy {
     protected State pack() throws IOException {
         
         State s;
-        s = new State(rectangles.length);
+        s = new State(rectangles.length, containerHeight);
 
         int sum = 0;
 

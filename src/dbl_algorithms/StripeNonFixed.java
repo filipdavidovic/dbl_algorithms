@@ -11,16 +11,18 @@ public class StripeNonFixed extends PackingStrategy {
 
     boolean rotationsAllowed;
     Rectangle[] rectangles;
+    int containerHeight;
 
     StripeNonFixed(int containerHeight, boolean rotationsAllowed, Rectangle[] rectangles) {
         this.rotationsAllowed = rotationsAllowed;
         this.rectangles = rectangles;
+        this.containerHeight = containerHeight;
     }
 
     @Override
     protected State pack() throws IOException, FileNotFoundException, CloneNotSupportedException {
         int minSide = getMinAreaSide(); //used to define the container height
-        State bestState = new State(rectangles.length); //keep track of best encountered state
+        State bestState = new State(rectangles.length, containerHeight); //keep track of best encountered state
         int maxHeight = getMaxHeight(rectangles);
         int initialContainerHeight = 2 * Math.max(minSide, maxHeight);
         int stepSize = (initialContainerHeight - maxHeight)/25; 

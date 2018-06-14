@@ -42,8 +42,8 @@ public class GeneticAlgorithm extends PackingStrategy {
         this.m = m;
         this.MAX_LOOPS = MAX_LOOPS;
         this.p_m = 0.4;
-        this.bestState = new State(rectangles.length);
-        this.worstState = new State(rectangles.length);
+        this.bestState = new State(rectangles.length, containerHeight);
+        this.worstState = new State(rectangles.length, containerHeight);
         }
        
         public void randomize( Rectangle[] rectangles, int n) {     
@@ -82,7 +82,7 @@ public class GeneticAlgorithm extends PackingStrategy {
             }
             //create the rest
             for (int j = 1; j < m; j++) {
-                population[j] = new State(rectangles.length);
+                population[j] = new State(rectangles.length, containerHeight);
                 this.randomize(rectangles, rectangles.length);
                 BottomLeftSlide bl2 = new BottomLeftSlide(containerHeight, rotationsAllowed,
                         rectangles, false);

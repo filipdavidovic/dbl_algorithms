@@ -26,7 +26,7 @@ public class BottomLeftSlide extends PackingStrategy{
             rectangles = instance.sort(rectangles);
         }
 
-        State s = new State(rectangles.length); // State to be returned
+        State s = new State(rectangles.length, containerHeight); // State to be returned
 
         int width = 0;  // Initial width
 

@@ -25,7 +25,7 @@ public class State {
     int rectNumber;
     boolean fixedHeight;
 
-    State(int size) {
+    State(int size, int containerHeight) {
         layout = new Rectangle[size];
         index = 0;
         innerArea = 0;
@@ -34,6 +34,9 @@ public class State {
         layoutWidth = 0;
         layoutHeight = 0;
         fixedHeight = false;
+        if (containerHeight != -1) {
+            setFixedHeight(containerHeight);
+        }
     }
 
     public void setFixedHeight(int containerHeight) {
@@ -162,7 +165,7 @@ public class State {
 
     @Override
     public State clone() {
-        State clone = new State(this.layout.length);
+        State clone = new State(this.layout.length, containerHeight);
 
         clone.setLayout(getLayoutClone());
         clone.setFillRate(this.fillRate);

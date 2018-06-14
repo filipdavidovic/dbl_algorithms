@@ -60,7 +60,7 @@ public class BruteForce extends PackingStrategy {
                     permutation[i] = b[i].clone();
                 }
 
-                State s = freeHeightPack(new State(rectangles.length), permutation, 0);
+                State s = freeHeightPack(new State(rectangles.length, containerHeight), permutation, 0);
 
                 if(state == null || s.getArea() < state.getArea()) {
                     state = s;
@@ -75,7 +75,7 @@ public class BruteForce extends PackingStrategy {
         State state = null;
 
         List<State> states = new ArrayList<>();
-        states.add(new State(permutation.length));
+        states.add(new State(permutation.length, containerHeight));
 
         Rectangle temp = permutation[0].clone();
         temp.setPosition(0, 0);

@@ -32,7 +32,7 @@ public class BottomLeft extends PackingStrategy {
         }
 
         
-        State s = new State(rectangles.length); // State to be returned
+        State s = new State(rectangles.length, containerHeight); // State to be returned
 
         int width = 0;  // Initial width
 
