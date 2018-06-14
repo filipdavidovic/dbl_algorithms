@@ -26,7 +26,7 @@ public class TestGenerator {
     Random rand;
     //Settings for the intervals of randomness
     final boolean TEST_OVERLAP = true;
-    final int RANDOM_TEST_CASES = 100;
+    final int RANDOM_TEST_CASES = 1000;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
@@ -71,7 +71,7 @@ public class TestGenerator {
             //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
  //////////////////////////////////////////////////////////////////////////////           
-            containerHeight = 1; //HARDCODED FOR TESTING 
+            //containerHeight = 1; //HARDCODED FOR TESTING 
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -92,7 +92,7 @@ public class TestGenerator {
             int inputSize =  rand.nextInt(5);
             numberOfRectangles = ARRAY_NR_RECTANGLES[inputSize];
  //////////////////////////////////////////////////////////////////////////////      
-            numberOfRectangles = 5; //HARDCODED FOR TESTING
+            //numberOfRectangles = 5; //HARDCODED FOR TESTING
             //create array of rectangles to store all of them
             Rectangle[] rectangles  = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
@@ -138,12 +138,12 @@ public class TestGenerator {
             //add StripeNonFixed
             PackingStrategy strategy_1 = new StripeNonFixed(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_1);
-//            
-//            //add DefaultStripe
+            
+            //add DefaultStripe
             PackingStrategy strategy_2 = new DefaultStripe(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_2);
-//            
+            
 //            //add BruteForce
             PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
                     this.isRotationsAllowed(), rectangles);
@@ -155,9 +155,9 @@ public class TestGenerator {
             listOfStrategies.add(strategy_4);
             
             //add Simulated Annealing
-//            PackingStrategy strategy_5 = new SimulatedAnnealing(containerHeight,
-//                    rotationsAllowed, rectangles);
-//            listOfStrategies.add(strategy_5);
+            PackingStrategy strategy_5 = new SimulatedAnnealing(containerHeight,
+                    rotationsAllowed, rectangles);
+            listOfStrategies.add(strategy_5);
             
                //add GeneticAlgorithm
             PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
@@ -181,6 +181,10 @@ public class TestGenerator {
                 if ((strategy == strategy_6) && ((this.getContainerHeight() == -1))) {
                     continue;
                 }
+                //make sure SA does not receive free height
+                if ((strategy == strategy_5) && ((this.getContainerHeight() == -1))) {
+                    continue;
+                }
 
                 
                 
@@ -188,7 +192,7 @@ public class TestGenerator {
 
 
                 if (TEST_OVERLAP){
-                    if (checkErrors(s)){ 
+                    if (checkErrors(s, strategy)){ 
                         drawing = new GUI(s);
                         drawing.run();
                        //print same stuff -- for debugging
@@ -258,13 +262,16 @@ public class TestGenerator {
     }
     
     
-    boolean checkErrors(State s){ //if true then the state has overlap
+    boolean checkErrors(State s, PackingStrategy strategy){ //if true then the state has overlap
 
         Rectangle[] test = s.getLayout();
         for (int i = 0; i < test.length; i++) {
             Rectangle current = test[i];
             for (int j = 0; j < test.length; j++) {
                  if (i != j){
+                    if ((test[i] == null) || (test[j] == null)){
+                        System.out.println("wtf");
+                    }
                     boolean bottomLeftOverlapY = ((test[i].bly<(test[j].bly)) && (test[i].bly + test[i].height >test[j].bly));
                     boolean bottomLeftOverlapX = ((test[i].blx<(test[j].blx)) && (test[i].blx + test[i].width >test[j].blx));
 
