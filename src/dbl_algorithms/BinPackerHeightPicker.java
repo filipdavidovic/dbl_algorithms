@@ -45,31 +45,31 @@ public class BinPackerHeightPicker extends PackingStrategy {
                 strategy = new BinPacker(i, rotationsAllowed, rectangles);
                 State sIntermediate = strategy.pack();
 
-                if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
+                if (sIntermediate.fillRate > maxQuality) {
                     maxQuality = sIntermediate.fillRate;
                     s = sIntermediate;
                 }
             }
         } else {
-            for (int i = Math.max(height - 200, maxHeight); i <height; i++) {
-                strategy = new BinPacker(i, rotationsAllowed, rectangles);
-                State sIntermediate = strategy.pack();
-
-                if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
-                    maxQuality = sIntermediate.fillRate;
-                    s = sIntermediate;
-                }
-            }
-//            int minWidth = Integer.MAX_VALUE;
-//            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
+//            for (int i = Math.max(height - 200, maxHeight); i <=height; i++) {
 //                strategy = new BinPacker(i, rotationsAllowed, rectangles);
 //                State sIntermediate = strategy.pack();
-//                if (sIntermediate.layoutWidth < minWidth) {
-//                    minWidth = sIntermediate.layoutWidth;
+//
+//                if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
+//                    maxQuality = sIntermediate.fillRate;
 //                    s = sIntermediate;
 //                }
 //            }
-//                
+            int minWidth = Integer.MAX_VALUE;
+            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
+                strategy = new BinPacker(i, rotationsAllowed, rectangles);
+                State sIntermediate = strategy.pack();
+                if (sIntermediate.layoutWidth < minWidth&& sIntermediate.layoutHeight <= containerHeight) {
+                    minWidth = sIntermediate.layoutWidth;
+                    s = sIntermediate;
+                }
+            }
+                
         }
 
         return s;
