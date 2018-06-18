@@ -26,7 +26,7 @@ public class GATestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final int RANDOM_TEST_CASES = 1;
+    final int RANDOM_TEST_CASES = 100;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
@@ -70,7 +70,7 @@ public class GATestGenerator {
             listOfStrategies = new ArrayList<>();
             //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
-            //containerHeight = 1; //HARDCODED FOR TESTING
+            containerHeight = 1; //HARDCODED FOR TESTING
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -129,10 +129,11 @@ public class GATestGenerator {
             PackingStrategy strategy;
             int m;
             int max_loops;
-            double p_m = 0.1;
-            for (m = 10; m < 41; m++){
-                for (max_loops = 1600; max_loops < 2401; max_loops += 25){
-                    while (p_m < 1.3){
+            
+            for (m = 10; m < 151; m+= 5){
+                for (max_loops = 2000; max_loops < 2001; max_loops += 100){
+                    double p_m = 0.9;
+                    while (p_m < 1.0){
                         strategy = new GeneticAlgorithm(this.getContainerHeight(),
                                 true, rectangles, m, max_loops, p_m);
                         State s = strategy.pack();
@@ -167,9 +168,9 @@ public class GATestGenerator {
                         fileWriter.append(String.valueOf(p_m));
                         //to see the progress
                         System.out.println(count);
-                        System.out.println(strategy.getClass());
+                        //System.out.println(strategy.getClass());
                         
-                        p_m += 0.1;
+                        p_m += 0.2;
                     }
                 }
             }

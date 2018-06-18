@@ -17,6 +17,7 @@ import java.util.Random;
  * @author dianaepureanu
  */
 public class TestGenerator {
+    
     private GUI drawing;
     private int containerHeight;
     private boolean rotationsAllowed;
@@ -25,7 +26,7 @@ public class TestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final boolean TEST_OVERLAP = true;
+    final boolean TEST_OVERLAP = false;
     final int RANDOM_TEST_CASES = 1000;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
@@ -65,6 +66,10 @@ public class TestGenerator {
         FileWriter fileWriter = new FileWriter("inputs"+randomizeFileName+".csv");
         fileWriter.append(FILE_HEADER);
         for (int count = 1; count <= RANDOM_TEST_CASES; count++){
+            
+            float maxFillRate = -1;
+            PackingStrategy bestStrategy;
+            
             //generate random container height: free or fixed aka 0 or 1
             //if containerHeight  is 1 (fixed), then generate random height.
             listOfStrategies = new ArrayList<>();
@@ -133,7 +138,12 @@ public class TestGenerator {
                     }
                 }
             }
-
+            
+            
+                        //add BruteForce
+            PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
+                    this.isRotationsAllowed(), rectangles);
+            listOfStrategies.add(strategy_3);
 
             //add StripeNonFixed
             PackingStrategy strategy_1 = new StripeNonFixed(this.getContainerHeight(), this.isRotationsAllowed(), rectangles);
@@ -144,10 +154,6 @@ public class TestGenerator {
                     this.isRotationsAllowed(), rectangles);
             listOfStrategies.add(strategy_2);
             
-//            //add BruteForce
-            PackingStrategy strategy_3 = new BruteForce(this.getContainerHeight(),
-                    this.isRotationsAllowed(), rectangles);
-            listOfStrategies.add(strategy_3);
             
             //add BinPacker
             PackingStrategy strategy_4 = new BinPackerHeightPicker(this.getContainerHeight(),
@@ -161,10 +167,11 @@ public class TestGenerator {
             
                //add GeneticAlgorithm
             PackingStrategy strategy_6 = new GeneticAlgorithm(this.getContainerHeight(),
-                    true, rectangles, 20, 2000, 0.4);
+                    true, rectangles, 140, 2000, 0.4);
             listOfStrategies.add(strategy_6);
             
-            
+            bestStrategy = new DefaultStrategy(this.getContainerHeight(),
+                    this.isRotationsAllowed(), rectangles );
             //write csv file
             for (PackingStrategy strategy: listOfStrategies) {
                 //make sure for stripe non fixed the height is really non-fixed
@@ -185,10 +192,52 @@ public class TestGenerator {
                 if ((strategy == strategy_5) && ((this.getContainerHeight() == -1))) {
                     continue;
                 }
-
-                
+                //make sure GA does not receive big input
+                if ((strategy == strategy_6) && ((this.numberOfRectangles > 25))) {
+                    continue;
+                }
+                //make sure SA does not receive big input
+                if ((strategy == strategy_5) && ((this.numberOfRectangles > 25))) {
+                    continue;
+                }
                 
                 State s = strategy.pack();
+                
+                if ((strategy == strategy_5) && ((checkErrors(s, strategy_5)))) {
+                    continue;
+                }
+                
+ //this part generate the bruteforce inputs for filip in which it wasnt optimal               
+//                if (s.getFillRate() > maxFillRate){
+//                    
+//                    if ((bestStrategy == strategy_3) && (strategy != strategy_3)){
+//                        System.out.println(" ");
+//                        System.out.println(strategy.getClass().getSimpleName()+ " has fill rate of "+ s.fillRate);
+//                        System.out.println("while "+ bestStrategy.getClass().getSimpleName()+ " has fill rate of "+ maxFillRate);
+//                        System.out.println("input: ");
+//                        if (this.getContainerHeight() == -1){
+//                            System.out.println("container height: free");
+//                        } else {
+//                            System.out.println("container height: fixed " + this.getContainerHeight() );
+//                        }
+//                        if (this.isRotationsAllowed()){
+//                            System.out.println("rotations allowed: yes");
+//                        } else {
+//                           System.out.println("rotations allowed: no"); 
+//                        }
+//                        System.out.println("number of rectangles: " + this.getNumberOfRectangles());
+//                        for (Rectangle r: rectangles){
+//                        System.out.print(String.valueOf(r.width+" "));
+//                        System.out.println(String.valueOf(r.height));
+//                        
+//                        }
+//                        System.out.println(" ");
+//
+//                        //System.out.println("Fill rate: " + s.getFillRate());
+//                    }
+//                    bestStrategy = strategy;
+//                    maxFillRate = s.getFillRate();
+//                }
 
 
                 if (TEST_OVERLAP){
@@ -203,7 +252,7 @@ public class TestGenerator {
                         System.out.print(String.valueOf(r.width+" "));
                         System.out.println(String.valueOf(r.height));
                         }
-                        s = strategy.pack();
+                        //s = strategy.pack();
 
                         System.out.println("Input number: " + count);
                         System.out.println("Strategy: " + strategy.getClass().getSimpleName());
