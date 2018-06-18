@@ -71,9 +71,8 @@ public class BinPackerHeightPicker extends PackingStrategy {
             }
 
         }
-        if (containerHeight != 0) {
+        if (containerHeight != -1) {
             s.setFixedHeight(containerHeight);
-            s.fillRate = s.getFillRate();
         }
         return s;
 
