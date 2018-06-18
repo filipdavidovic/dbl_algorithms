@@ -17,7 +17,7 @@ public class State {
     int index;
     int layoutWidth;
     int layoutHeight;  //height of bounding rectangle
-    int containerHeight; //height of container
+    int containerHeight = -1; //height of container
     int prevWidth;
     int prevHeight;
     private int innerArea; //Sum of areas of rectangles that were placed already
@@ -49,7 +49,8 @@ public class State {
     }
 
     public float getFillRate() {
-        return this.fillRate;
+        fillRate = (float) getInnerArea() / (float) getArea();
+        return fillRate;
     }
 
     public void setIndex(int index) {

@@ -61,17 +61,20 @@ public class BinPackerHeightPicker extends PackingStrategy {
 //                }
 //            }
             int minWidth = Integer.MAX_VALUE;
-            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
+            for (int i = Math.max(containerHeight - 100, maxHeight); i <= containerHeight; i++) {
                 strategy = new BinPacker(i, rotationsAllowed, rectangles);
                 State sIntermediate = strategy.pack();
-                if (sIntermediate.layoutWidth < minWidth&& sIntermediate.layoutHeight <= containerHeight) {
+                if (sIntermediate.layoutWidth < minWidth && sIntermediate.layoutHeight <= containerHeight) {
                     minWidth = sIntermediate.layoutWidth;
                     s = sIntermediate;
                 }
             }
-                
-        }
 
+        }
+        if (containerHeight != 0) {
+            s.setFixedHeight(containerHeight);
+            s.fillRate = s.getFillRate();
+        }
         return s;
 
     }

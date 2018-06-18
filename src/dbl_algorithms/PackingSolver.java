@@ -208,8 +208,8 @@ public class PackingSolver {
             state.reorder();
             printOutput(state.getLayout(), containerHeight, rotationsAllowed);
 
-            drawing = new GUI(state);
-            drawing.run();
+            //drawing = new GUI(state);
+            //drawing.run();
 
         } catch (IOException e) {
             System.out.println(e.toString());
@@ -218,16 +218,16 @@ public class PackingSolver {
 
     private void printOutput(Rectangle[] layout, int containerHeight, boolean rotationsAllowed) {
 
-        System.out.println("container height: " + containerHeight);
-        System.out.println("rotations allowed: " + rotationsAllowed);
-        System.out.println("number of rectangles: " + layout.length);
-        for (Rectangle rectangle : layout) {
-            if (rectangle.rotated) {
-                System.out.println(rectangle.height + " " + rectangle.width);
-            } else {
-                System.out.println(rectangle.width + " " + rectangle.height);
-            }
-        }
+//        System.out.println("container height: " + containerHeight);
+//        System.out.println("rotations allowed: " + rotationsAllowed);
+//        System.out.println("number of rectangles: " + layout.length);
+//        for (Rectangle rectangle : layout) {
+//            if (rectangle.rotated) {
+//                System.out.println(rectangle.height + " " + rectangle.width);
+//            } else {
+//                System.out.println(rectangle.width + " " + rectangle.height);
+//            }
+//        }
 
         System.out.println("placement of rectangles");
         for (int i = 0; i < layout.length; i++) {
@@ -247,9 +247,9 @@ public class PackingSolver {
             Rectangle current = test[i];
             for (int j = 0; j < test.length; j++) {
                 if (i != j) {
-                    if ((test[i] == null) || (test[j] == null)) {
-                        System.out.println("wtf");
-                    }
+//                    if ((test[i] == null) || (test[j] == null)) {
+//                        System.out.println("wtf");
+//                    }
                     boolean bottomLeftOverlapY = ((test[i].bly < (test[j].bly)) && (test[i].bly + test[i].height > test[j].bly));
                     boolean bottomLeftOverlapX = ((test[i].blx < (test[j].blx)) && (test[i].blx + test[i].width > test[j].blx));
 
