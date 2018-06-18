@@ -34,39 +34,42 @@ public class BinPackerHeightPicker extends PackingStrategy {
             if (maxHeight < rectangles[i].height) {
                 maxHeight = rectangles[i].height;
             }
-            
+
         }
         int height = s1.layoutHeight;
         double maxQuality = 0;
         State s = null;
 
-        if (containerHeight==-1) {
-            for (int i = Math.max(height - 200,maxHeight); i <= height + 200; i++) {
+        if (containerHeight == -1) {
+            for (int i = Math.max(height - 200, maxHeight); i <= height + 200; i++) {
                 strategy = new BinPacker(i, rotationsAllowed, rectangles);
                 State sIntermediate = strategy.pack();
-                if (containerHeight != -1) {
-                    if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
-                        maxQuality = sIntermediate.fillRate;
-                        s = sIntermediate;
-                    }
-                } else {
-                    if (sIntermediate.fillRate > maxQuality) {
-                        maxQuality = sIntermediate.fillRate;
-                        s = sIntermediate;
-                    }
-                }
-            }
-        } else { 
-            int minWidth = Integer.MAX_VALUE;
-            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
-                strategy = new BinPacker(i, rotationsAllowed, rectangles);
-                State sIntermediate = strategy.pack();
-                if (sIntermediate.layoutWidth < minWidth) {
-                    minWidth = sIntermediate.layoutWidth;
+
+                if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
+                    maxQuality = sIntermediate.fillRate;
                     s = sIntermediate;
                 }
             }
-                
+        } else {
+            for (int i = Math.max(height - 200, maxHeight); i <height; i++) {
+                strategy = new BinPacker(i, rotationsAllowed, rectangles);
+                State sIntermediate = strategy.pack();
+
+                if (sIntermediate.fillRate > maxQuality && sIntermediate.layoutHeight <= containerHeight) {
+                    maxQuality = sIntermediate.fillRate;
+                    s = sIntermediate;
+                }
+            }
+//            int minWidth = Integer.MAX_VALUE;
+//            for (int i = Math.max(containerHeight-100, maxHeight); i <= containerHeight; i++) {
+//                strategy = new BinPacker(i, rotationsAllowed, rectangles);
+//                State sIntermediate = strategy.pack();
+//                if (sIntermediate.layoutWidth < minWidth) {
+//                    minWidth = sIntermediate.layoutWidth;
+//                    s = sIntermediate;
+//                }
+//            }
+//                
         }
 
         return s;

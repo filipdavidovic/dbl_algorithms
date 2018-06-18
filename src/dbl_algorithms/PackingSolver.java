@@ -75,8 +75,8 @@ public class PackingSolver {
             }
             State state = null;
             PackingStrategy s1, s2, s3, s4;
-            State st1,st2,st3,st4;
-            
+            State st1, st2, st3, st4;
+
             switch (numberOfRectangles) {
 
             case 3:
@@ -114,8 +114,10 @@ public class PackingSolver {
                         state = st2;
                     } else if (st3.layoutWidth < st4.layoutWidth) {
                         state = st3;
-                    } else {
+                    } else if (!checkErrors(st4, s4)) {
                         state = st4;
+                    } else {
+                        state = st3;
                     }
                     break;
                 }
@@ -130,6 +132,7 @@ public class PackingSolver {
                     } else {
                         state = st2;
                     }
+                    state = st1;
                     break;
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
@@ -146,9 +149,12 @@ public class PackingSolver {
                         state = st2;
                     } else if (st3.layoutWidth < st4.layoutWidth) {
                         state = st3;
-                    } else {
+                    } else if (!checkErrors(st4, s4)) {
                         state = st4;
+                    } else {
+                        state = st3;
                     }
+                    state = st1;
                     break;
                 }
             case 5000:
@@ -173,12 +179,13 @@ public class PackingSolver {
                         state = st2;
                     }
                 }
+                state = st1;
                 break;
             case 10000:
                 if (containerHeight == -1) {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
                     s2 = new StripeNonFixed(containerHeight, rotationsAllowed, rectangles);
-                    
+
                     st1 = s1.pack();
                     st2 = s2.pack();
                     if (st1.fillRate > st2.fillRate) {
@@ -196,7 +203,7 @@ public class PackingSolver {
                     } else {
                         state = st2;
                     }
-                    
+
                 }
                 break;
             }
@@ -234,6 +241,41 @@ public class PackingSolver {
             }
             System.out.println(layout[i].blx + " " + layout[i].bly);
         }
+    }
+
+    boolean checkErrors(State s, PackingStrategy strategy) { //if true then the state has overlap
+
+        Rectangle[] test = s.getLayout();
+        for (int i = 0; i < test.length; i++) {
+            Rectangle current = test[i];
+            for (int j = 0; j < test.length; j++) {
+                if (i != j) {
+                    if ((test[i] == null) || (test[j] == null)) {
+                        System.out.println("wtf");
+                    }
+                    boolean bottomLeftOverlapY = ((test[i].bly < (test[j].bly)) && (test[i].bly + test[i].height > test[j].bly));
+                    boolean bottomLeftOverlapX = ((test[i].blx < (test[j].blx)) && (test[i].blx + test[i].width > test[j].blx));
+
+                    boolean bottomRightOverlapY = ((test[i].bly < (test[j].bly)) && (test[i].bly + test[i].height > test[j].bly));
+                    boolean bottomRightOverlapX = ((test[i].blx < (test[j].blx + test[j].width)) && (test[i].blx + test[i].width > test[j].blx + test[j].width));
+
+                    boolean topLeftOverlapY = ((test[i].bly < (test[j].bly + test[j].height)) && (test[i].bly + test[i].height > test[j].bly + test[j].height));
+                    boolean topLeftOverlapX = ((test[i].blx < (test[j].blx)) && (test[i].blx + test[i].width > test[j].blx));
+
+                    boolean topRightOverlapY = ((test[i].bly < (test[j].bly + test[j].height)) && (test[i].bly + test[i].height > test[j].bly + test[j].height));
+                    boolean topRightOverlapX = ((test[i].blx < (test[j].blx + test[j].width)) && (test[i].blx + test[i].width > test[j].blx + test[j].width));
+
+                    if ((bottomLeftOverlapY && bottomLeftOverlapX)
+                            || (bottomRightOverlapY && bottomRightOverlapX)
+                            || (topLeftOverlapY && topLeftOverlapX)
+                            || (topRightOverlapY && topRightOverlapX)) {
+
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
