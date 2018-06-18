@@ -132,7 +132,6 @@ public class PackingSolver {
                     } else {
                         state = st2;
                     }
-                    state = st1;
                     break;
                 } else {
                     s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
@@ -154,7 +153,6 @@ public class PackingSolver {
                     } else {
                         state = st3;
                     }
-                    state = st1;
                     break;
                 }
             case 5000:
@@ -179,7 +177,6 @@ public class PackingSolver {
                         state = st2;
                     }
                 }
-                state = st1;
                 break;
             case 10000:
                 if (containerHeight == -1) {
