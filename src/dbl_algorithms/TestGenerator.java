@@ -26,8 +26,9 @@ public class TestGenerator {
     List<PackingStrategy> listOfStrategies;
     Random rand;
     //Settings for the intervals of randomness
-    final boolean TEST_OVERLAP = false;
-    final int RANDOM_TEST_CASES = 1000;
+    final boolean TEST_OVERLAP = true;
+    
+    final int RANDOM_TEST_CASES = 200;
     final int RANDOM_CONTAINER_HEIGHT = 201;
     final int[] ARRAY_NR_RECTANGLES = new int[] {3,5,10,25,5000};
     final int RANDOM_WIDTH = 201;
@@ -60,7 +61,7 @@ public class TestGenerator {
         String COMMA_DELIMITER = ", ";
         String NEW_LINE_SEPARATOR = "\n";
         String FILE_HEADER = "#input, Strategy, Shape Filter, Container Height, "
-                + "Rotations Allowed, Number of rectangles, "
+                + "Rotations Allowed, Number of rectangles, Width, Runtime, "
                 + "Fill rate";
         int randomizeFileName = rand.nextInt(50);
         FileWriter fileWriter = new FileWriter("inputs"+randomizeFileName+".csv");
@@ -76,7 +77,8 @@ public class TestGenerator {
             //choose randomly whether its gonna be fixed or free height
             containerHeight = rand.nextInt(2);
  //////////////////////////////////////////////////////////////////////////////           
-            //containerHeight = 1; //HARDCODED FOR TESTING 
+            //containerHeight = 0; //HARDCODED FOR TESTING 
+            
             if (containerHeight == 0) {
                 containerHeight = -1;
             } else if (containerHeight == 1) {
@@ -97,7 +99,7 @@ public class TestGenerator {
             int inputSize =  rand.nextInt(5);
             numberOfRectangles = ARRAY_NR_RECTANGLES[inputSize];
  //////////////////////////////////////////////////////////////////////////////      
-            //numberOfRectangles = 5; //HARDCODED FOR TESTING
+            //numberOfRectangles = 25; //HARDCODED FOR TESTING
             //create array of rectangles to store all of them
             Rectangle[] rectangles  = new Rectangle [numberOfRectangles];
             // generate n random widths and heights for the rectangles
@@ -200,16 +202,31 @@ public class TestGenerator {
                 if ((strategy == strategy_5) && ((this.numberOfRectangles > 25))) {
                     continue;
                 }
-                
+                long startTime = System.nanoTime();
                 State s = strategy.pack();
+                long endTime = System.nanoTime();
+                double duration = (endTime - startTime);
+                double seconds = (double)duration / (double) 1000000000.0;
+                
+                //long seconds = (duration / 1000000) % 60;
+                //String formatedSeconds = String.format("(%f seconds)", seconds);
+                //System.out.println("formatedSeconds = "+ formatedSeconds);
                 
                 if ((strategy == strategy_5) && ((checkErrors(s, strategy_5)))) {
                     continue;
                 }
                 
+                
+//                if (s.getFillRate() > 1){
+//                    drawing = new GUI(s);
+//                    drawing.run();
+//                    System.out.println(" wtffergerer;rf");
+//                }
+                
  //this part generate the bruteforce inputs for filip in which it wasnt optimal               
 //                if (s.getFillRate() > maxFillRate){
-//                    
+//                    drawing = new GUI(s);
+//                    drawing.run();
 //                    if ((bestStrategy == strategy_3) && (strategy != strategy_3)){
 //                        System.out.println(" ");
 //                        System.out.println(strategy.getClass().getSimpleName()+ " has fill rate of "+ s.fillRate);
@@ -238,8 +255,7 @@ public class TestGenerator {
 //                    bestStrategy = strategy;
 //                    maxFillRate = s.getFillRate();
 //                }
-
-
+    
                 if (TEST_OVERLAP){
                     if (checkErrors(s, strategy)){ 
                         drawing = new GUI(s);
@@ -294,6 +310,10 @@ public class TestGenerator {
                 fileWriter.append(String.valueOf(this.isRotationsAllowed()));
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(this.getNumberOfRectangles()));
+                fileWriter.append(COMMA_DELIMITER);
+                fileWriter.append(String.valueOf(s.getLayoutWidth()));
+                fileWriter.append(COMMA_DELIMITER);
+                fileWriter.append(String.valueOf(seconds));
                 
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(s.getFillRate()));
