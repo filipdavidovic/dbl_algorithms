@@ -22,6 +22,7 @@ public class Rectangle {
     public Rectangle right = null;
     public Rectangle down = null;
     public Rectangle fit = null;
+    public boolean rotateable = true;
 
     Rectangle(int width, int height) {
         //default
@@ -58,10 +59,12 @@ public class Rectangle {
     }
 
     public void rotate() {
-        int temp = width;
-        width = height;
-        height = temp;
-        rotated = !rotated;
+        if (rotateable) {
+            int temp = width;
+            width = height;
+            height = temp;
+            rotated = !rotated;
+        }
     }
 
     public boolean isPlaced() {
@@ -71,12 +74,12 @@ public class Rectangle {
     public void setPlaced(boolean placed) {
         this.placed = placed;
     }
-    
+
     //order in the intial array
     public void setInitialposition(int i) {
         position = i;
     }
-    
+
     public int getInitialposition() {
         return position;
     }
@@ -88,6 +91,8 @@ public class Rectangle {
         rectangle.used = this.used;
         rectangle.placed = this.placed;
         rectangle.setInitialposition(position);
+        rectangle.rotateable = this.rotateable;
         return rectangle;
+        
     }
 }

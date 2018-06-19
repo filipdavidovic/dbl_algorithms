@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SimulatedAnnealing extends PackingStrategy{
+public class SimulatedAnnealing extends PackingStrategy {
 
     private final int MAX_CONSECUTIVE_MUTATIONS;
     private final int MAX_SUCCESSFUL_MUTATIONS;
@@ -42,9 +42,9 @@ public class SimulatedAnnealing extends PackingStrategy{
         this.successfulMutations = 0;
         this.consecutiveMutations = 0;
 
-        if(rotationsAllowed) {
-            for(int i = 0; i < rectangles.length; i++) {
-                if(rectangles[i].width <= containerHeight) {
+        if (rotationsAllowed) {
+            for (int i = 0; i < rectangles.length; i++) {
+                if (rectangles[i].width <= containerHeight && rectangles[i].rotateable) {
                     rotatable.add(i);
                 }
             }
@@ -53,9 +53,9 @@ public class SimulatedAnnealing extends PackingStrategy{
 
     @Override
     protected State pack() throws IOException, FileNotFoundException, CloneNotSupportedException {
-        for(int i = 1; i <= 400; i++) {
+        for (int i = 1; i <= 400; i++) {
             // mutate until the temperature decreases
-            while(!checkDecreaseTemperature()) {
+            while (!checkDecreaseTemperature()) {
                 mutate();
             }
         }
@@ -63,27 +63,38 @@ public class SimulatedAnnealing extends PackingStrategy{
     }
 
     /**
-     * Method that decides whether the newly created state is good enough to be the current state.
+     * Method that decides whether the newly created state is good enough to be
+     * the current state.
      *
-     * @param delta - difference in width between the current state and the newly created state.
-     * @return - boolean value which is true if the new state is good enough, false otherwise.
+     * @param delta - difference in width between the current state and the
+     * newly created state.
+     * @return - boolean value which is true if the new state is good enough,
+     * false otherwise.
      */
     private boolean keepMutation(int delta) {
         return delta < 0 || rand.nextFloat() < Math.exp((double) (-delta) / temperature);
     }
 
     /**
-     * Method used to create a mutation, and if good enough replace the current state with the newly generated one.
+     * Method used to create a mutation, and if good enough replace the current
+     * state with the newly generated one.
      *
      * @throws IOException - required by the BottomLeft packing method.
      */
     private void mutate() throws IOException, CloneNotSupportedException {
         int currentWidth = current.getLayoutWidth();
-
-        if(!(rotationsAllowed && rotatable.size() > 0 && rand.nextBoolean())) {
+        rotatable.clear();
+        if (rotationsAllowed) {
+            for (int k = 0; k < rectangles.length; k++) {
+                if (rectangles[k].width <= containerHeight && rectangles[k].rotateable) {
+                    rotatable.add(k);
+                }
+            }
+        }
+        if (!(rotationsAllowed && rotatable.size() > 0 && rand.nextBoolean())) {
             int i = rand.nextInt(rectangles.length - 1);
             int j = rand.nextInt(rectangles.length - 1);
-            while(i == j) {
+            while (i == j) {
                 j = rand.nextInt(rectangles.length - 1);
             }
 
@@ -94,7 +105,7 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             State state = bl.pack();
 
-            if(best.getLayoutWidth() > state.getLayoutWidth()) {
+            if (best.getLayoutWidth() > state.getLayoutWidth()) {
                 best = state.clone();
             }
 
@@ -102,27 +113,37 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             // if mutation is not good enough, return to the previous state
             // otherwise keep mutation
-            if(!keepMutation(delta)) {
+            if (!keepMutation(delta)) {
                 temp = rectangles[i];
                 rectangles[i] = rectangles[j];
                 rectangles[j] = temp;
                 // update counters
                 consecutiveMutations++;
+                //keep rotatable accurate
+
             } else {
                 current = state.clone();
                 // update counters
                 consecutiveMutations++;
                 successfulMutations++;
+
             }
         } else {
+            rotatable.clear();
+            if (rotationsAllowed) {
+                for (int k = 0; k < rectangles.length; k++) {
+                    if (rectangles[k].width <= containerHeight && rectangles[k].rotateable) {
+                        rotatable.add(k);
+                    }
+                }
+            }
             int i = rotatable.get(rand.nextInt(rotatable.size()));
 
             // rotate the rectangle in order to test the new permutation
             rectangles[i].rotate();
-
             State state = bl.pack();
 
-            if(best.getLayoutWidth() > state.getLayoutWidth()) {
+            if (best.getLayoutWidth() > state.getLayoutWidth()) {
                 best = state.clone();
             }
 
@@ -130,7 +151,7 @@ public class SimulatedAnnealing extends PackingStrategy{
 
             // if mutation is not good enough, return to the previous state
             // otherwise keep mutation
-            if(!keepMutation(delta)) {
+            if (!keepMutation(delta)) {
                 rectangles[i].rotate();
                 // update counters
                 consecutiveMutations++;
@@ -139,17 +160,19 @@ public class SimulatedAnnealing extends PackingStrategy{
                 // update counters
                 consecutiveMutations++;
                 successfulMutations++;
+
             }
         }
     }
 
     /**
-     * Method which decides whether the temperature is to be decreased, and if so decreases it.
+     * Method which decides whether the temperature is to be decreased, and if
+     * so decreases it.
      *
      * @return - returns whether the temperature has changed.
      */
     private boolean checkDecreaseTemperature() {
-        if(successfulMutations >= MAX_SUCCESSFUL_MUTATIONS || consecutiveMutations >= MAX_CONSECUTIVE_MUTATIONS) {
+        if (successfulMutations >= MAX_SUCCESSFUL_MUTATIONS || consecutiveMutations >= MAX_CONSECUTIVE_MUTATIONS) {
             temperature *= 0.9;
             successfulMutations = 0;
             consecutiveMutations = 0;

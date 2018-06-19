@@ -73,6 +73,20 @@ public class PackingSolver {
                     minHeight = height;
                 }
             }
+            if(containerHeight!= -1 && rotationsAllowed){
+                for(int i=0; i<rectangles.length;i++){
+                    if(rectangles[i].height > containerHeight){
+                        rectangles[i].rotate();
+                        rectangles[i].rotateable = false;
+                        
+                   }
+                    if(rectangles[i].width > containerHeight){
+                        rectangles[i].rotateable = false;
+                        
+                   }
+                }
+            }
+            
             State state = null;
             PackingStrategy s1, s2, s3, s4;
             State st1, st2, st3, st4;
@@ -100,25 +114,30 @@ public class PackingSolver {
                     }
                     break;
                 } else {
-                    s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
-                    s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
-                    s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
-                    s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
-                    st1 = s1.pack();
-                    st2 = s2.pack();
-                    st3 = s3.pack();
-                    st4 = s4.pack();
-                    if (st1.layoutWidth < st2.layoutWidth && st1.layoutWidth < st3.layoutWidth && st1.layoutWidth < st4.layoutWidth) {
-                        state = st1;
-                    } else if (st2.layoutWidth < st3.layoutWidth && st2.layoutWidth < st4.layoutWidth) {
-                        state = st2;
-                    } else if (st3.layoutWidth < st4.layoutWidth) {
-                        state = st3;
-                    } else if (!checkErrors(st4, s4)) {
-                        state = st4;
+                    if (!rotationsAllowed) {
+                        s1 = new BruteForce(containerHeight, rotationsAllowed, rectangles);
+                        state = s1.pack();
                     } else {
-                        state = st3;
-                    }
+                        s1 = new BinPackerHeightPicker(containerHeight, rotationsAllowed, rectangles);
+                        s2 = new DefaultStripe(containerHeight, rotationsAllowed, rectangles);
+                        s3 = new GeneticAlgorithm(containerHeight, rotationsAllowed, rectangles, 20, 2000, 0.4);
+                        s4 = new SimulatedAnnealing(containerHeight, rotationsAllowed, rectangles);
+                        st1 = s1.pack();
+                        st2 = s2.pack();
+                        st3 = s3.pack();
+                        st4 = s4.pack();
+                        if (st1.layoutWidth < st2.layoutWidth && st1.layoutWidth < st3.layoutWidth && st1.layoutWidth < st4.layoutWidth) {
+                            state = st1;
+                        } else if (st2.layoutWidth < st3.layoutWidth && st2.layoutWidth < st4.layoutWidth) {
+                            state = st2;
+                        } else if (st3.layoutWidth < st4.layoutWidth) {
+                            state = st3;
+                        } else if (!checkErrors(st4, s4)) {
+                            state = st4;
+                        } else {
+                            state = st3;
+                        }
+                    } 
                     break;
                 }
             case 25:
@@ -247,9 +266,9 @@ public class PackingSolver {
             Rectangle current = test[i];
             for (int j = 0; j < test.length; j++) {
                 if (i != j) {
-//                    if ((test[i] == null) || (test[j] == null)) {
-//                        System.out.println("wtf");
-//                    }
+                    if ((test[i] == null) || (test[j] == null)) {
+                        System.out.println("wtf");
+                    }
                     boolean bottomLeftOverlapY = ((test[i].bly < (test[j].bly)) && (test[i].bly + test[i].height > test[j].bly));
                     boolean bottomLeftOverlapX = ((test[i].blx < (test[j].blx)) && (test[i].blx + test[i].width > test[j].blx));
 
